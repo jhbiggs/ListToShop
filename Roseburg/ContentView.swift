@@ -22,7 +22,7 @@ struct ContentView: View {
                 urlInputBar
                 contentArea
             }
-            .navigationTitle("Shoppr")
+            .navigationTitle("ShopZen")
             .toolbar { toolbarContent }
             .onAppear {
                 if viewModel == nil {
