@@ -142,7 +142,7 @@ struct QuantityMerger {
         }
 
         // Normalize unicode fractions
-        var normalized = trimmed
+        let normalized = trimmed
             .replacingOccurrences(of: "½", with: "1/2")
             .replacingOccurrences(of: "⅓", with: "1/3")
             .replacingOccurrences(of: "⅔", with: "2/3")
@@ -152,7 +152,7 @@ struct QuantityMerger {
 
         // Pattern: optional number, optional fraction, then unit
         let pattern = #"^(\d+)?\s*(\d+/\d+)?\s*(.*)$"#
-        guard let match = normalized.range(of: pattern, options: .regularExpression) else {
+        guard normalized.range(of: pattern, options: .regularExpression) != nil else {
             return ParsedQuantity(amount: 1, unit: normalized.lowercased(), raw: raw)
         }
 
