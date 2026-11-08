@@ -25,14 +25,18 @@ final class GroceryItem {
     var category: AisleCategory
     var isChecked: Bool
 
+    /// Recipes that call for this item. Shared ingredients link to several recipes.
     @Relationship(inverse: \Recipe.items)
-    var recipe: Recipe?
+    var recipes: [Recipe] = []
 
-    init(name: String, quantity: String, category: AisleCategory = .other, isChecked: Bool = false, recipe: Recipe? = nil) {
+    /// Items with no recipe links were added by hand and survive recipe deletion.
+    var isManual: Bool { recipes.isEmpty }
+
+    init(name: String, quantity: String, category: AisleCategory = .other, isChecked: Bool = false, recipes: [Recipe] = []) {
         self.name = name
         self.quantity = quantity
         self.category = category
         self.isChecked = isChecked
-        self.recipe = recipe
+        self.recipes = recipes
     }
 }

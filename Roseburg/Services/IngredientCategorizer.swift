@@ -53,8 +53,12 @@ struct IngredientCategorizer {
 
         let prompt = """
         You are a grocery store assistant. For each ingredient below, extract:
-        1. A short, clean ingredient name (no quantities or preparation notes).
-        2. The quantity and unit exactly as written (or empty string if none).
+        1. A short, clean ingredient name — just the food item, no quantities, units, or preparation notes. For example: "olive oil", "parsley", "shrimp", "orzo".
+        2. The quantity and unit exactly as written (e.g. "2 lbs", "1/4 cup", "4 tablespoons"). Use empty string if not specified.
+        3. The grocery store aisle category.
+
+        IMPORTANT: The name must NEVER start with a period, unit abbreviation, or number. Only the food name.
+        Never remove letters from the start of a word: "Cloves garlic" is "garlic" with a 3-clove quantity, not "loves garlic".
 
         Ingredients:
         \(ingredientList)
@@ -67,14 +71,75 @@ struct IngredientCategorizer {
 
         return response.content.ingredients.map { item in
             let category = AisleCategory(rawValue: item.category.lowercased()) ?? .other
-            return (name: item.name, quantity: item.quantity, category: category)
+            let cleanedName = repairName(cleanAIName(item.name), rawIngredients: rawIngredients)
+            return (name: cleanedName, quantity: item.quantity, category: category)
         }
     }
     #endif
 
+    /// Cleans up AI-generated ingredient names that may have leading punctuation,
+    /// unit abbreviations, or other artifacts.
+    private static func cleanAIName(_ name: String) -> String {
+        var cleaned = name
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Strip leading patterns like ". ", "C. ", "Pt. ", "Tbsp. ", etc.
+        let leadingJunkPattern = #"^(?:[A-Za-z]{0,4}\.\s*|[\.\,\-\;\:]+\s*)"#
+        if let range = cleaned.range(of: leadingJunkPattern, options: .regularExpression) {
+            cleaned = String(cleaned[range.upperBound...])
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        // Strip leading "and " (e.g. "and shrimp")
+        if cleaned.lowercased().hasPrefix("and ") {
+            cleaned = String(cleaned.dropFirst(4))
+        }
+
+        // Capitalize first letter
+        if let first = cleaned.first {
+            cleaned = first.uppercased() + cleaned.dropFirst()
+        }
+
+        return cleaned.isEmpty ? name : cleaned
+    }
+
+    /// The model sometimes drops a leading letter ("Cloves garlic" → "Loves garlic").
+    /// If the name only appears inside a longer word in the source text, use the
+    /// keyword-cleaned name from that source line instead.
+    private static func repairName(_ name: String, rawIngredients: [String]) -> String {
+        // Check the first word only, since the model may also add or drop other words.
+        guard let firstWord = name.lowercased().split(separator: " ").first.map(String.init),
+              firstWord.count >= 3 else { return name }
+
+        let escaped = NSRegularExpression.escapedPattern(for: firstWord)
+        let startsAWord = rawIngredients.contains { raw in
+            raw.lowercased().range(of: "\\b\(escaped)", options: .regularExpression) != nil
+        }
+        if startsAWord { return name }
+
+        guard let source = rawIngredients.first(where: { $0.lowercased().contains(firstWord) }) else {
+            return name
+        }
+        return categorizeWithKeywords([source]).first?.name ?? name
+    }
+
     /// Keyword-based categorizer — used as fallback or on non-AI devices.
     static func categorize(_ ingredients: [String]) -> [(name: String, quantity: String, category: AisleCategory)] {
         return categorizeWithKeywords(ingredients)
+    }
+
+    /// Sorts a pasted grocery list into aisles. Uses the on-device model when available,
+    /// and falls back to keyword matching otherwise.
+    static func sortList(_ lines: [String]) async -> [(name: String, quantity: String, category: AisleCategory)] {
+        #if canImport(FoundationModels)
+        do {
+            return try await categorize(lines) as [(name: String, quantity: String, category: AisleCategory)]
+        } catch {
+            return categorizeWithKeywords(lines)
+        }
+        #else
+        return categorizeWithKeywords(lines)
+        #endif
     }
 
     /// Explicit keyword-based categorizer (avoids ambiguity with async overload).
@@ -197,7 +262,7 @@ struct IngredientCategorizer {
     private static func splitQuantityAndName(_ raw: String) -> (quantity: String, name: String) {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let quantityPattern = #"^([\d½¼¾⅓⅔⅛/.\-–]+\s*(?:cups?|tablespoons?|tbsp|teaspoons?|tsp|ounces?|oz|pounds?|lbs?|gallons?|quarts?|pints?|liters?|ml|cloves?|cans?|jars?|bags?|boxes?|packages?|bunch(?:es)?|heads?|stalks?|slices?|pieces?|pinch(?:es)?|dash(?:es)?|handfuls?|sprigs?|large|medium|small|whole)?[\s,]*(?:\([^)]*\)\s*)?)"#
+        let quantityPattern = #"^([\d½¼¾⅓⅔⅛/.\-–]+\s*(?:cups?|C|c|tablespoons?|tbsp|T|teaspoons?|tsp|t|ounces?|oz|pounds?|lbs?|lb|gallons?|gal|quarts?|qt|pints?|pt|liters?|ml|cloves?|cans?|jars?|bags?|boxes?|packages?|bunch(?:es)?|heads?|stalks?|slices?|pieces?|pinch(?:es)?|dash(?:es)?|handfuls?|sprigs?|large|medium|small|whole)\.?[\s,]*(?:\([^)]*\)\s*)?)"#
 
         if let range = trimmed.range(of: quantityPattern, options: .regularExpression, range: trimmed.startIndex..<trimmed.endIndex) {
             let quantity = String(trimmed[range]).trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: ","))
@@ -214,6 +279,19 @@ struct IngredientCategorizer {
 
     static func simplifyName(_ raw: String) -> String {
         var name = raw.lowercased()
+
+        // Strip leading periods, unit abbreviations left over from quantity parsing
+        // e.g. ". olive oil", "C. orzo", "Pt. grape tomatoes"
+        name = name.replacingOccurrences(
+            of: #"^(?:[a-z]{0,4}\.\s*|[\.\,\;\:]+\s*)+"#,
+            with: "",
+            options: .regularExpression
+        )
+
+        // Strip leading "and " (e.g. "and shrimp")
+        if name.hasPrefix("and ") {
+            name = String(name.dropFirst(4))
+        }
 
         if let commaRange = name.range(of: #",\s*(for\s|to\s|or\s|plus\s|divided|optional|if\s|as\s|at\s|such\s).*"#, options: .regularExpression) {
             name = String(name[..<commaRange.lowerBound])
@@ -258,5 +336,103 @@ struct IngredientCategorizer {
         }
 
         return name
+    }
+}
+
+// MARK: - Duplicate Detection
+
+#if canImport(FoundationModels)
+@Generable
+struct IngredientMatch {
+    @Guide(description: "A name copied exactly from the NEW list.")
+    var newName: String
+
+    @Guide(description: "A name copied exactly from the EXISTING list that is the same grocery product, or an empty string if there is none.")
+    var existingName: String
+}
+
+@Generable
+struct IngredientMatchList {
+    @Guide(description: "One entry for every name in the NEW list.")
+    var matches: [IngredientMatch]
+}
+#endif
+
+/// Decides when two ingredient names refer to the same grocery item.
+/// `key(for:)` catches exact duplicates deterministically. `matchSynonyms` asks the
+/// on-device model about near-duplicates such as "Scallions" and "Green onions".
+enum IngredientMatcher {
+
+    /// Canonical dictionary key: lowercased, accent-free, punctuation and parentheticals
+    /// removed, and each word singularized. "Tomatoes", "tomato" and "Tomato (diced)" share a key.
+    static func key(for name: String) -> String {
+        var s = name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+        s = s.replacingOccurrences(of: #"\([^)]*\)"#, with: " ", options: .regularExpression)
+        s = s.replacingOccurrences(of: #"[^a-z0-9\s]"#, with: " ", options: .regularExpression)
+        let words = s.split(whereSeparator: { $0.isWhitespace }).map { singularize(String($0)) }
+        let result = words.joined(separator: " ")
+        return result.isEmpty ? name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) : result
+    }
+
+    private static func singularize(_ word: String) -> String {
+        guard word.count > 3 else { return word }
+        if word.hasSuffix("ies") { return String(word.dropLast(3)) + "y" }
+        if word.hasSuffix("oes") { return String(word.dropLast(2)) }
+        if word.hasSuffix("ches") || word.hasSuffix("shes") || word.hasSuffix("xes") { return String(word.dropLast(2)) }
+        if word.hasSuffix("ss") || word.hasSuffix("us") || word.hasSuffix("is") { return word }
+        if word.hasSuffix("s") { return String(word.dropLast()) }
+        return word
+    }
+
+    /// Returns a map from each new name to the existing name it duplicates.
+    /// Returns an empty map when the model is unavailable or finds nothing.
+    static func matchSynonyms(newNames: [String], existingNames: [String]) async -> [String: String] {
+        #if canImport(FoundationModels)
+        guard !newNames.isEmpty, !existingNames.isEmpty else { return [:] }
+
+        var existingByKey: [String: String] = [:]
+        for name in existingNames where existingByKey[key(for: name)] == nil {
+            existingByKey[key(for: name)] = name
+        }
+        var newByKey: [String: String] = [:]
+        for name in newNames where newByKey[key(for: name)] == nil {
+            newByKey[key(for: name)] = name
+        }
+
+        let prompt = """
+        You are checking a grocery list for duplicates. Below are EXISTING items and NEW items.
+        For each NEW item, return the EXISTING item it is the same grocery product as, or an empty string if none is.
+        Ignore quantities, preparation words, and capitalization.
+        Same product examples: "Garlic" = "garlic cloves"; "Scallions" = "Green onions".
+        Different product examples: "Butter" is not "Peanut butter"; "Lime" is not "Lime juice"; "Chicken" is not "Chicken broth".
+        Only match when they are truly the same product. When unsure, return an empty string.
+
+        EXISTING:
+        \(existingNames.map { "  - \($0)" }.joined(separator: "\n"))
+
+        NEW:
+        \(newNames.map { "  - \($0)" }.joined(separator: "\n"))
+        """
+
+        do {
+            let session = LanguageModelSession()
+            let response = try await session.respond(to: prompt, generating: IngredientMatchList.self)
+
+            var result: [String: String] = [:]
+            for match in response.content.matches {
+                let existingKey = key(for: match.existingName)
+                let newKey = key(for: match.newName)
+                guard !existingKey.isEmpty,
+                      let existingOriginal = existingByKey[existingKey],
+                      let newOriginal = newByKey[newKey] else { continue }
+                result[newOriginal] = existingOriginal
+            }
+            return result
+        } catch {
+            return [:]
+        }
+        #else
+        return [:]
+        #endif
     }
 }

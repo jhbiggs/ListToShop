@@ -24,6 +24,13 @@ final class GroceryListViewModel {
 
     private var modelContext: ModelContext
 
+    /// One ingredient from a recipe, after categorizing and before it is matched to the list.
+    private struct Incoming {
+        var name: String
+        var category: AisleCategory
+        var quantities: [String]
+    }
+
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         fetchAll()
@@ -36,8 +43,27 @@ final class GroceryListViewModel {
         let grouped = Dictionary(grouping: groceryItems) { $0.category }
         return AisleCategory.allCases.compactMap { cat in
             guard let items = grouped[cat], !items.isEmpty else { return nil }
-            return (category: cat, items: items)
+            // Still-needed items first; checked items drop to the bottom of their aisle.
+            let sorted = items.sorted { a, b in
+                a.isChecked != b.isChecked ? !a.isChecked : a.name < b.name
+            }
+            return (category: cat, items: sorted)
         }
+    }
+
+    /// Plain-text checklist for sharing to Notes. ☐ still needed, ☑ already in the cart.
+    var checklistText: String {
+        var lines = ["Grocery List", ""]
+        for section in itemsByCategory {
+            lines.append(section.category.displayName)
+            for item in section.items {
+                let box = item.isChecked ? "☑" : "☐"
+                let qty = item.quantity.isEmpty ? "" : " (\(item.quantity))"
+                lines.append("\(box) \(item.name)\(qty)")
+            }
+            lines.append("")
+        }
+        return lines.joined(separator: "\n")
     }
 
     // MARK: - Actions
@@ -70,40 +96,68 @@ final class GroceryListViewModel {
             let recipe = Recipe(url: url, title: result.title, rawIngredients: result.ingredients, steps: steps)
             modelContext.insert(recipe)
 
-            // 4. Create GroceryItem models, merging duplicates by name
-            //    First, group categorized items by name to merge within this recipe
-            let grouped = Dictionary(grouping: categorized) { $0.name.lowercased() }
-            let merged = grouped.map { (_, items) -> (name: String, quantity: String, category: AisleCategory) in
-                let name = items.first!.name
-                let category = items.first!.category
-                let quantities = items.map(\.quantity).filter { !$0.isEmpty }
-                let mergedQty = quantities.count > 1
-                    ? QuantityMerger.merge(quantities)
-                    : quantities.first ?? ""
-                return (name: name, quantity: mergedQty, category: category)
+            // 4. Collect this recipe's ingredients in a dictionary keyed by canonical name,
+            //    so "Tomatoes" and "tomato" from the same recipe land in one entry.
+            var incoming: [String: Incoming] = [:]
+            for item in categorized {
+                let key = IngredientMatcher.key(for: item.name)
+                guard !key.isEmpty else { continue }
+                var entry = incoming[key] ?? Incoming(name: item.name, category: item.category, quantities: [])
+                if !item.quantity.isEmpty {
+                    entry.quantities.append(item.quantity)
+                }
+                incoming[key] = entry
             }
 
-            // Then check against existing items in the store
-            let allItemsDescriptor = FetchDescriptor<GroceryItem>()
-            let allExisting = (try? modelContext.fetch(allItemsDescriptor)) ?? []
+            // 5. Index the existing list the same way.
+            let existingItems = (try? modelContext.fetch(FetchDescriptor<GroceryItem>())) ?? []
+            var existing: [String: GroceryItem] = [:]
+            for item in existingItems {
+                let key = IngredientMatcher.key(for: item.name)
+                if existing[key] == nil {
+                    existing[key] = item
+                }
+            }
 
-            for item in merged {
-                if let existing = allExisting.first(where: { $0.name.lowercased() == item.name.lowercased() }) {
-                    // Merge quantities across recipes
-                    if !item.quantity.isEmpty {
-                        let quantities = [existing.quantity, item.quantity].filter { !$0.isEmpty }
-                        existing.quantity = QuantityMerger.merge(quantities)
-                    }
-                    recipe.items.append(existing)
+            // 6. Names with no exact match may still be the same product ("Scallions" vs "Green onions").
+            //    Ask the on-device model about just those.
+            var aliases: [String: String] = [:]  // incoming key → existing key
+            let unmatchedKeys = incoming.keys.filter { existing[$0] == nil }
+            if !unmatchedKeys.isEmpty, !existing.isEmpty {
+                let newNames = unmatchedKeys.compactMap { incoming[$0]?.name }
+                let existingNames = existing.values.map(\.name)
+                let matches = await IngredientMatcher.matchSynonyms(newNames: newNames, existingNames: existingNames)
+                for (newName, existingName) in matches {
+                    aliases[IngredientMatcher.key(for: newName)] = IngredientMatcher.key(for: existingName)
+                }
+            }
+
+            // 7. Fold aliased entries into their targets.
+            var merged: [String: Incoming] = [:]
+            for (key, entry) in incoming {
+                let target = aliases[key] ?? key
+                if var current = merged[target] {
+                    current.quantities += entry.quantities
+                    merged[target] = current
                 } else {
-                    let groceryItem = GroceryItem(
-                        name: item.name,
-                        quantity: item.quantity,
-                        category: item.category
+                    merged[target] = entry
+                }
+            }
+
+            // 8. Update existing items or create new ones.
+            for (key, entry) in merged {
+                let quantity = Self.mergeQuantities(entry.quantities)
+                if let item = existing[key] {
+                    item.quantity = Self.mergeQuantities([item.quantity, quantity])
+                    item.recipes.append(recipe)
+                } else {
+                    let item = GroceryItem(
+                        name: entry.name,
+                        quantity: quantity,
+                        category: entry.category,
+                        recipes: [recipe]
                     )
-                    groceryItem.recipe = recipe
-                    recipe.items.append(groceryItem)
-                    modelContext.insert(groceryItem)
+                    modelContext.insert(item)
                 }
             }
 
@@ -116,8 +170,37 @@ final class GroceryListViewModel {
         isLoading = false
     }
 
+    /// Adds an item by hand. If the list already has the same item, its quantity is combined and it is unchecked.
+    func addManualItem(name: String, quantity: String, category: AisleCategory) {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedQuantity = quantity.trimmingCharacters(in: .whitespacesAndNewlines)
+        let key = IngredientMatcher.key(for: trimmedName)
+        guard !key.isEmpty else { return }
+
+        if let item = groceryItems.first(where: { IngredientMatcher.key(for: $0.name) == key }) {
+            item.quantity = Self.mergeQuantities([item.quantity, trimmedQuantity])
+            item.isChecked = false
+        } else {
+            let displayName = trimmedName.prefix(1).uppercased() + trimmedName.dropFirst()
+            modelContext.insert(GroceryItem(name: displayName, quantity: trimmedQuantity, category: category))
+        }
+        try? modelContext.save()
+        fetchAll()
+    }
+
     func deleteRecipe(_ recipe: Recipe) {
+        let linkedItems = recipe.items
         modelContext.delete(recipe)
+        // Keep shared items that another recipe or a manual entry still needs.
+        for item in linkedItems where item.recipes.allSatisfy({ $0 === recipe }) {
+            modelContext.delete(item)
+        }
+        try? modelContext.save()
+        fetchAll()
+    }
+
+    func deleteItem(_ item: GroceryItem) {
+        modelContext.delete(item)
         try? modelContext.save()
         fetchAll()
     }
@@ -125,6 +208,12 @@ final class GroceryListViewModel {
     func toggleItem(_ item: GroceryItem) {
         item.isChecked.toggle()
         try? modelContext.save()
+    }
+
+    func setCategory(_ item: GroceryItem, to category: AisleCategory) {
+        item.category = category
+        try? modelContext.save()
+        fetchAll()
     }
 
     func clearChecked() {
@@ -147,6 +236,15 @@ final class GroceryListViewModel {
     }
 
     // MARK: - Private
+
+    /// Merges quantity strings, ignoring empty ones.
+    private static func mergeQuantities(_ quantities: [String]) -> String {
+        let nonEmpty = quantities.filter { !$0.isEmpty }
+        if nonEmpty.count > 1 {
+            return QuantityMerger.merge(nonEmpty)
+        }
+        return nonEmpty.first ?? ""
+    }
 
     private func fetchAll() {
         let recipeDescriptor = FetchDescriptor<Recipe>(sortBy: [SortDescriptor(\.dateAdded, order: .reverse)])

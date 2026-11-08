@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 #if canImport(FoundationModels)
 import FoundationModels
@@ -34,9 +35,11 @@ struct RecipeDetailView: View {
     let recipe: Recipe
     @State private var stepIngredientMap: [Int: [GroceryItem]] = [:]
     @State private var isLoading = true
+    @AppStorage("keepScreenAwake") private var keepScreenAwake = true
 
     var body: some View {
         List {
+            keepAwakeSection
             stepsSection
             ingredientsSection
             linkSection
@@ -44,6 +47,25 @@ struct RecipeDetailView: View {
         .navigationTitle(recipe.title)
         .navigationBarTitleDisplayMode(.large)
         .task { await matchIngredientsToSteps() }
+        .onAppear { applyIdleTimer() }
+        .onChange(of: keepScreenAwake) { _, _ in applyIdleTimer() }
+        .onDisappear { UIApplication.shared.isIdleTimerDisabled = false }
+    }
+
+    // MARK: - Keep Awake
+
+    private var keepAwakeSection: some View {
+        Section {
+            Toggle(isOn: $keepScreenAwake) {
+                Label("Keep Screen Awake", systemImage: "sun.max")
+            }
+        } footer: {
+            Text("While this recipe is open, the screen won't lock.")
+        }
+    }
+
+    private func applyIdleTimer() {
+        UIApplication.shared.isIdleTimerDisabled = keepScreenAwake
     }
 
     @ViewBuilder

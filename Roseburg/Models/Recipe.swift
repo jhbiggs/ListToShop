@@ -16,7 +16,8 @@ final class Recipe {
     var steps: [String]
     var dateAdded: Date
 
-    @Relationship(deleteRule: .cascade)
+    /// Ingredients this recipe needs. Deleting a recipe does not delete shared items;
+    /// the view model removes items that no longer belong to any recipe.
     var items: [GroceryItem] = []
 
     init(url: String, title: String, rawIngredients: [String], steps: [String] = [], dateAdded: Date = .now) {
