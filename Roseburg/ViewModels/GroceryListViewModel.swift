@@ -69,7 +69,9 @@ final class GroceryListViewModel {
     // MARK: - Actions
 
     /// Fetches a recipe URL, extracts ingredients, categorizes them with Apple Intelligence, and saves everything.
-    func addRecipe(url: String) async {
+    func addRecipe(url rawURL: String) async {
+        // Unwrap Facebook link redirects so we fetch and store the real recipe page.
+        let url = RecipeFetcher.unwrapRedirect(rawURL)
         isLoading = true
         errorMessage = nil
 
@@ -93,7 +95,26 @@ final class GroceryListViewModel {
 
             // 3. Create the Recipe model
             let steps = RecipeFetcher.extractSteps(from: result.steps)
-            let recipe = Recipe(url: url, title: result.title, rawIngredients: result.ingredients, steps: steps)
+            // Use the page's time when it has one; otherwise ask the on-device model.
+            var totalMinutes = result.totalMinutes
+            var timeIsEstimated = false
+            if totalMinutes == nil {
+                totalMinutes = await RecipeTimeEstimator.estimateMinutes(
+                    title: result.title,
+                    ingredients: result.ingredients,
+                    steps: steps
+                )
+                timeIsEstimated = totalMinutes != nil
+            }
+
+            let recipe = Recipe(
+                url: url,
+                title: result.title,
+                rawIngredients: result.ingredients,
+                steps: steps,
+                totalMinutes: totalMinutes
+            )
+            recipe.timeIsEstimated = timeIsEstimated
             modelContext.insert(recipe)
 
             // 4. Collect this recipe's ingredients in a dictionary keyed by canonical name,
@@ -233,6 +254,52 @@ final class GroceryListViewModel {
         }
         try? modelContext.save()
         fetchAll()
+    }
+
+    // MARK: - Timing
+
+    /// The meal time's hour and minute applied to today, so only the time of day matters.
+    func mealDate(for mealTime: Date) -> Date {
+        let parts = Calendar.current.dateComponents([.hour, .minute], from: mealTime)
+        return Calendar.current.date(
+            bySettingHour: parts.hour ?? 18,
+            minute: parts.minute ?? 0,
+            second: 0,
+            of: .now
+        ) ?? .now
+    }
+
+    /// Asks the on-device model for a time for a saved recipe that has none.
+    func estimateTime(for recipe: Recipe) async {
+        guard let minutes = await RecipeTimeEstimator.estimateMinutes(
+            title: recipe.title,
+            ingredients: recipe.rawIngredients,
+            steps: recipe.steps
+        ) else { return }
+        recipe.totalMinutes = minutes
+        recipe.timeIsEstimated = true
+        try? modelContext.save()
+        fetchAll()
+    }
+
+    /// Saves a time the user typed in. Passing nil clears it.
+    func setTime(for recipe: Recipe, minutes: Int?) {
+        recipe.totalMinutes = minutes
+        recipe.timeIsEstimated = false
+        try? modelContext.save()
+        fetchAll()
+    }
+
+    /// When to start this recipe so it finishes at the meal time. Nil if the page gave no time.
+    func suggestedStart(for recipe: Recipe, mealTime: Date) -> Date? {
+        guard let minutes = recipe.totalMinutes else { return nil }
+        return mealDate(for: mealTime).addingTimeInterval(-Double(minutes) * 60)
+    }
+
+    /// When to begin cooking: the start time of the longest recipe in the set.
+    func startCookingBy(mealTime: Date) -> Date? {
+        guard let longest = recipes.compactMap(\.totalMinutes).max() else { return nil }
+        return mealDate(for: mealTime).addingTimeInterval(-Double(longest) * 60)
     }
 
     // MARK: - Private

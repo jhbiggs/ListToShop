@@ -8,10 +8,60 @@
 import Foundation
 import SwiftSoup
 
+#if canImport(FoundationModels)
+import FoundationModels
+
+@Generable
+struct EstimatedCookTime {
+    @Guide(description: "Total minutes from starting prep to having the finished dish, including prep, cooking, and resting. A whole number.")
+    var minutes: Int
+}
+#endif
+
+/// Estimates how long a recipe takes when the page doesn't list a time.
+enum RecipeTimeEstimator {
+
+    /// Returns total minutes from the on-device model, or nil if it's unavailable or the answer is implausible.
+    static func estimateMinutes(title: String, ingredients: [String], steps: [String]) async -> Int? {
+        #if canImport(FoundationModels)
+        // Keep the prompt short enough for the on-device model's context window.
+        let ingredientText = String(ingredients.map { "- \($0)" }.joined(separator: "\n").prefix(1500))
+        let stepText = String(steps.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n").prefix(3000))
+
+        let prompt = """
+        Estimate how many minutes it takes to make this recipe, from starting prep to the finished dish. Include prep, cooking, and resting. Do not include shopping.
+        Answer with a whole number of minutes.
+
+        Recipe: \(title)
+
+        Ingredients:
+        \(ingredientText)
+
+        Steps:
+        \(stepText)
+        """
+
+        do {
+            let session = LanguageModelSession()
+            let response = try await session.respond(to: prompt, generating: EstimatedCookTime.self)
+            let minutes = response.content.minutes
+            return (5...480).contains(minutes) ? minutes : nil
+        } catch {
+            return nil
+        }
+        #else
+        return nil
+        #endif
+    }
+}
+
+
 struct RecipeFetchResult {
     let title: String
     let ingredients: [String]
     let steps: [Any]?
+    /// Total time to make the recipe, from the page's totalTime (or prepTime + cookTime). Nil if the page doesn't say.
+    var totalMinutes: Int? = nil
 }
 
 enum RecipeFetchError: LocalizedError {
@@ -32,6 +82,30 @@ enum RecipeFetchError: LocalizedError {
 }
 
 struct RecipeFetcher {
+
+    /// Facebook and Instagram wrap outside links in a redirect such as
+    /// `https://l.facebook.com/l.php?u=<encoded destination>`. Returns the destination, or the input unchanged.
+    /// Also removes Facebook's `fbclid` tracking parameter from the result.
+    static func unwrapRedirect(_ urlString: String) -> String {
+        var resolved = urlString
+        if let url = URL(string: urlString),
+           let host = url.host?.lowercased(),
+           host == "l.facebook.com" || host == "lm.facebook.com",
+           let target = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+               .queryItems?
+               .first(where: { $0.name == "u" })?
+               .value,
+           !target.isEmpty {
+            resolved = target
+        }
+
+        guard var components = URLComponents(string: resolved) else { return resolved }
+        if let items = components.queryItems {
+            let kept = items.filter { $0.name != "fbclid" }
+            components.queryItems = kept.isEmpty ? nil : kept
+        }
+        return components.string ?? resolved
+    }
 
     /// Downloads the HTML at `urlString`, extracts the recipe title and ingredients.
     static func fetch(from urlString: String) async throws -> RecipeFetchResult {
@@ -118,8 +192,34 @@ struct RecipeFetcher {
         
         let steps = dict["recipeInstructions"] as? [Any]
 
+        let prep = minutes(fromISO8601Duration: dict["prepTime"] as? String) ?? 0
+        let cook = minutes(fromISO8601Duration: dict["cookTime"] as? String) ?? 0
+        let total = minutes(fromISO8601Duration: dict["totalTime"] as? String)
+            ?? (prep + cook > 0 ? prep + cook : nil)
+
         print("Found recipe: \(title) with \(ingredients.count) ingredients and \(steps?.count ?? 0) steps")
-        return RecipeFetchResult(title: title, ingredients: ingredients, steps: steps)
+        return RecipeFetchResult(title: title, ingredients: ingredients, steps: steps, totalMinutes: total)
+    }
+
+    // MARK: - Time Parsing
+
+    /// Converts an ISO 8601 duration such as "PT1H30M" or "P0DT0H45M" into minutes.
+    static func minutes(fromISO8601Duration raw: String?) -> Int? {
+        guard let raw, !raw.isEmpty else { return nil }
+        let upper = raw.uppercased()
+        let pattern = #"^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?)?$"#
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: upper, range: NSRange(upper.startIndex..., in: upper)) else {
+            return nil
+        }
+
+        func group(_ index: Int) -> Int {
+            guard let range = Range(match.range(at: index), in: upper) else { return 0 }
+            return Int(upper[range]) ?? 0
+        }
+
+        let total = group(1) * 1440 + group(2) * 60 + group(3)
+        return total > 0 ? total : nil
     }
 
     // MARK: - Steps Extraction

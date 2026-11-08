@@ -17,6 +17,7 @@ struct ContentView: View {
     @State private var collapsedCategories: Set<AisleCategory> = []
     @State private var showingAddItem = false
     @State private var recipesItem: GroceryItem?
+    @State private var timeRecipe: Recipe?
 
     var body: some View {
         NavigationStack {
@@ -37,6 +38,11 @@ struct ContentView: View {
                 ItemRecipesView(item: item)
                     .presentationDetents([.height(recipesSheetHeight(for: item))])
                     .presentationDragIndicator(.visible)
+            }
+            .sheet(item: $timeRecipe) { recipe in
+                RecipeTimeEditor(recipe: recipe) { minutes in
+                    viewModel?.setTime(for: recipe, minutes: minutes)
+                }
             }
             .onAppear {
                 if viewModel == nil {
@@ -171,6 +177,7 @@ struct ContentView: View {
             }
 
             if !vm.recipes.isEmpty {
+                timingSection(vm: vm)
                 recipesSection(vm: vm)
             }
         }
@@ -224,6 +231,61 @@ struct ContentView: View {
         }
     }
 
+    // MARK: - Timing
+
+    /// Target meal time, stored as a time interval so @AppStorage can keep it between launches.
+    /// Zero means the user hasn't set one yet, so 6:00 PM is used.
+    @AppStorage("targetMealTime") private var targetMealTimeInterval: Double = 0
+
+    private var mealTimeBinding: Binding<Date> {
+        Binding(
+            get: {
+                targetMealTimeInterval == 0
+                    ? (Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: .now) ?? .now)
+                    : Date(timeIntervalSinceReferenceDate: targetMealTimeInterval)
+            },
+            set: { targetMealTimeInterval = $0.timeIntervalSinceReferenceDate }
+        )
+    }
+
+    private func timingSection(vm: GroceryListViewModel) -> some View {
+        Section {
+            DatePicker("Meal time", selection: mealTimeBinding, displayedComponents: .hourAndMinute)
+            if let start = vm.startCookingBy(mealTime: mealTimeBinding.wrappedValue) {
+                LabeledContent("Start cooking by") {
+                    Text(start.formatted(date: .omitted, time: .shortened))
+                        .fontWeight(.semibold)
+                }
+            }
+        } header: {
+            Text("Timing")
+        } footer: {
+            Text("Each recipe is timed to finish at the meal time. Recipes without a listed cook time are left out.")
+        }
+    }
+
+    @ViewBuilder
+    private func timingLabel(for recipe: Recipe, vm: GroceryListViewModel) -> some View {
+        if let minutes = recipe.totalMinutes,
+           let start = vm.suggestedStart(for: recipe, mealTime: mealTimeBinding.wrappedValue) {
+            Text("Start \(start.formatted(date: .omitted, time: .shortened)) · \(recipe.timeIsEstimated ? "about " : "")\(Self.durationText(minutes))")
+                .font(.subheadline)
+                .foregroundStyle(.tint)
+        } else {
+            Text("No cook time listed")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    static func durationText(_ minutes: Int) -> String {
+        let hours = minutes / 60
+        let remainder = minutes % 60
+        if hours == 0 { return "\(remainder) min" }
+        if remainder == 0 { return "\(hours) hr" }
+        return "\(hours) hr \(remainder) min"
+    }
+
     // MARK: - Recipes Section
 
     private func recipesSection(vm: GroceryListViewModel) -> some View {
@@ -233,10 +295,25 @@ struct ContentView: View {
                     VStack(alignment: .leading) {
                         Text(recipe.title)
                             .font(.headline)
+                        timingLabel(for: recipe, vm: vm)
                         Text(recipe.url)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
+                    }
+                }
+                .contextMenu {
+                    if recipe.totalMinutes == nil {
+                        Button {
+                            Task { await vm.estimateTime(for: recipe) }
+                        } label: {
+                            Label("Estimate Time", systemImage: "sparkles")
+                        }
+                    }
+                    Button {
+                        timeRecipe = recipe
+                    } label: {
+                        Label("Set Cook Time…", systemImage: "clock")
                     }
                 }
             }
@@ -449,6 +526,67 @@ struct ItemRecipesView: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Recipe Time Sheet
+
+/// Lets the user type in or correct how long a recipe takes.
+struct RecipeTimeEditor: View {
+    let recipe: Recipe
+    let onSave: (Int?) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var hours: Int
+    @State private var minutes: Int
+
+    init(recipe: Recipe, onSave: @escaping (Int?) -> Void) {
+        self.recipe = recipe
+        self.onSave = onSave
+        let total = recipe.totalMinutes ?? 0
+        _hours = State(initialValue: total / 60)
+        _minutes = State(initialValue: total % 60)
+    }
+
+    private var totalMinutes: Int {
+        hours * 60 + minutes
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Stepper("Hours: \(hours)", value: $hours, in: 0...24)
+                    Stepper("Minutes: \(minutes)", value: $minutes, in: 0...59)
+                } footer: {
+                    Text("Total time to make \(recipe.title), from prep to finished dish.")
+                }
+
+                if recipe.totalMinutes != nil {
+                    Section {
+                        Button("Clear Time", role: .destructive) {
+                            onSave(nil)
+                            dismiss()
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Cook Time")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        onSave(totalMinutes)
+                        dismiss()
+                    }
+                    .disabled(totalMinutes == 0)
+                }
+            }
+        }
+        .presentationDetents([.medium])
     }
 }
 
