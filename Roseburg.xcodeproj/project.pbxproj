@@ -1,0 +1,917 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 70;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5E09BCF82F9EDF4400E53EEC /* ShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5E09BCEE2F9EDF4400E53EEC /* ShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5E20F9DC2F66DB7100731417 /* RoseburgApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E20F9DB2F66DB7100731417 /* RoseburgApp.swift */; };
+		5E20F9DE2F66DB7100731417 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E20F9DD2F66DB7100731417 /* ContentView.swift */; };
+		5E20F9E02F66DB7200731417 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E20F9DF2F66DB7200731417 /* Assets.xcassets */; };
+		5E20F9E42F66DB7200731417 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E20F9E32F66DB7200731417 /* Preview Assets.xcassets */; };
+		5E20F9EE2F66DB7300731417 /* RoseburgTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E20F9ED2F66DB7300731417 /* RoseburgTests.swift */; };
+		5E20F9F82F66DB7300731417 /* RoseburgUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E20F9F72F66DB7300731417 /* RoseburgUITests.swift */; };
+		5E20F9FA2F66DB7300731417 /* RoseburgUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E20F9F92F66DB7300731417 /* RoseburgUITestsLaunchTests.swift */; };
+		5EA38FFE2F94FE510013B276 /* GroceryDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA38FFD2F94FE510013B276 /* GroceryDataStore.swift */; };
+		5EA390022F94FE7D0013B276 /* RoseburgShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA390012F94FE7D0013B276 /* RoseburgShortcuts.swift */; };
+		5EA390032F94FE7D0013B276 /* GroceryItemEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA38FFF2F94FE7D0013B276 /* GroceryItemEntity.swift */; };
+		5EA390042F94FE7D0013B276 /* OrganizeByAisleIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA390002F94FE7D0013B276 /* OrganizeByAisleIntent.swift */; };
+		5EC159572F9D17B1007F4AD6 /* QuantityMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC159552F9D17B1007F4AD6 /* QuantityMerger.swift */; };
+		5EC9F9DD2F762099001A2290 /* GroceryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F9DB2F762099001A2290 /* GroceryListViewModel.swift */; };
+		5EC9F9E42F7620AD001A2290 /* IngredientCategorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F9E12F7620AD001A2290 /* IngredientCategorizer.swift */; };
+		5EC9F9E52F7620AD001A2290 /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F9DF2F7620AD001A2290 /* Recipe.swift */; };
+		5EC9F9E62F7620AD001A2290 /* GroceryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F9DE2F7620AD001A2290 /* GroceryItem.swift */; };
+		5EC9F9E72F7620AD001A2290 /* RecipeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F9E22F7620AD001A2290 /* RecipeFetcher.swift */; };
+		5EC9F9EA2F762152001A2290 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5EC9F9E92F762152001A2290 /* SwiftSoup */; };
+		5EC9F9EC2F763129001A2290 /* RecipeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F9EB2F763129001A2290 /* RecipeDetailView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5E09BCF62F9EDF4400E53EEC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5E20F9D02F66DB7100731417 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5E09BCED2F9EDF4400E53EEC;
+			remoteInfo = ShareExtension;
+		};
+		5E20F9EA2F66DB7300731417 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5E20F9D02F66DB7100731417 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5E20F9D72F66DB7100731417;
+			remoteInfo = Roseburg;
+		};
+		5E20F9F42F66DB7300731417 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5E20F9D02F66DB7100731417 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5E20F9D72F66DB7100731417;
+			remoteInfo = Roseburg;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5E09BCF92F9EDF4400E53EEC /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5E09BCF82F9EDF4400E53EEC /* ShareExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		5E09BCEE2F9EDF4400E53EEC /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E09BCFE2F9EE10300E53EEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		5E20F9D82F66DB7100731417 /* Roseburg.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Roseburg.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E20F9DB2F66DB7100731417 /* RoseburgApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoseburgApp.swift; sourceTree = "<group>"; };
+		5E20F9DD2F66DB7100731417 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		5E20F9DF2F66DB7200731417 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5E20F9E12F66DB7200731417 /* Roseburg.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Roseburg.entitlements; sourceTree = "<group>"; };
+		5E20F9E32F66DB7200731417 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		5E20F9E92F66DB7300731417 /* RoseburgTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoseburgTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E20F9ED2F66DB7300731417 /* RoseburgTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoseburgTests.swift; sourceTree = "<group>"; };
+		5E20F9F32F66DB7300731417 /* RoseburgUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoseburgUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E20F9F72F66DB7300731417 /* RoseburgUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoseburgUITests.swift; sourceTree = "<group>"; };
+		5E20F9F92F66DB7300731417 /* RoseburgUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoseburgUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		5EA38FFD2F94FE510013B276 /* GroceryDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryDataStore.swift; sourceTree = "<group>"; };
+		5EA38FFF2F94FE7D0013B276 /* GroceryItemEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryItemEntity.swift; sourceTree = "<group>"; };
+		5EA390002F94FE7D0013B276 /* OrganizeByAisleIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizeByAisleIntent.swift; sourceTree = "<group>"; };
+		5EA390012F94FE7D0013B276 /* RoseburgShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoseburgShortcuts.swift; sourceTree = "<group>"; };
+		5EC159552F9D17B1007F4AD6 /* QuantityMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuantityMerger.swift; sourceTree = "<group>"; };
+		5EC9F9DB2F762099001A2290 /* GroceryListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryListViewModel.swift; sourceTree = "<group>"; };
+		5EC9F9DE2F7620AD001A2290 /* GroceryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryItem.swift; sourceTree = "<group>"; };
+		5EC9F9DF2F7620AD001A2290 /* Recipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
+		5EC9F9E12F7620AD001A2290 /* IngredientCategorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientCategorizer.swift; sourceTree = "<group>"; };
+		5EC9F9E22F7620AD001A2290 /* RecipeFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFetcher.swift; sourceTree = "<group>"; };
+		5EC9F9EB2F763129001A2290 /* RecipeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5E09BD052F9F0D2500E53EEC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5E09BCED2F9EDF4400E53EEC /* ShareExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		5E09BCEF2F9EDF4400E53EEC /* ShareExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5E09BD052F9F0D2500E53EEC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ShareExtension; sourceTree = "<group>"; };
+		5E8A8D782F950C7A00E95CDA /* Architecture */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Architecture; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5E09BCEB2F9EDF4400E53EEC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E20F9D52F66DB7100731417 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5EC9F9EA2F762152001A2290 /* SwiftSoup in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E20F9E62F66DB7300731417 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E20F9F02F66DB7300731417 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5E20F9CF2F66DB7100731417 = {
+			isa = PBXGroup;
+			children = (
+				5E20F9DA2F66DB7100731417 /* Roseburg */,
+				5E20F9EC2F66DB7300731417 /* RoseburgTests */,
+				5E20F9F62F66DB7300731417 /* RoseburgUITests */,
+				5E09BCEF2F9EDF4400E53EEC /* ShareExtension */,
+				5E20F9D92F66DB7100731417 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5E20F9D92F66DB7100731417 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5E20F9D82F66DB7100731417 /* Roseburg.app */,
+				5E20F9E92F66DB7300731417 /* RoseburgTests.xctest */,
+				5E20F9F32F66DB7300731417 /* RoseburgUITests.xctest */,
+				5E09BCEE2F9EDF4400E53EEC /* ShareExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5E20F9DA2F66DB7100731417 /* Roseburg */ = {
+			isa = PBXGroup;
+			children = (
+				5E09BCFE2F9EE10300E53EEC /* Info.plist */,
+				5E8A8D782F950C7A00E95CDA /* Architecture */,
+				5EA38FFF2F94FE7D0013B276 /* GroceryItemEntity.swift */,
+				5EA390002F94FE7D0013B276 /* OrganizeByAisleIntent.swift */,
+				5EA390012F94FE7D0013B276 /* RoseburgShortcuts.swift */,
+				5E20F9DB2F66DB7100731417 /* RoseburgApp.swift */,
+				5EC9F9EB2F763129001A2290 /* RecipeDetailView.swift */,
+				5E20F9DD2F66DB7100731417 /* ContentView.swift */,
+				5EC9F9E02F7620AD001A2290 /* Models */,
+				5EC9F9E32F7620AD001A2290 /* Services */,
+				5EC9F9DC2F762099001A2290 /* ViewModels */,
+				5E20F9DF2F66DB7200731417 /* Assets.xcassets */,
+				5E20F9E12F66DB7200731417 /* Roseburg.entitlements */,
+				5E20F9E22F66DB7200731417 /* Preview Content */,
+			);
+			path = Roseburg;
+			sourceTree = "<group>";
+		};
+		5E20F9E22F66DB7200731417 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				5E20F9E32F66DB7200731417 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		5E20F9EC2F66DB7300731417 /* RoseburgTests */ = {
+			isa = PBXGroup;
+			children = (
+				5E20F9ED2F66DB7300731417 /* RoseburgTests.swift */,
+			);
+			path = RoseburgTests;
+			sourceTree = "<group>";
+		};
+		5E20F9F62F66DB7300731417 /* RoseburgUITests */ = {
+			isa = PBXGroup;
+			children = (
+				5E20F9F72F66DB7300731417 /* RoseburgUITests.swift */,
+				5E20F9F92F66DB7300731417 /* RoseburgUITestsLaunchTests.swift */,
+			);
+			path = RoseburgUITests;
+			sourceTree = "<group>";
+		};
+		5EC9F9DC2F762099001A2290 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				5EC9F9DB2F762099001A2290 /* GroceryListViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		5EC9F9E02F7620AD001A2290 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				5EA38FFD2F94FE510013B276 /* GroceryDataStore.swift */,
+				5EC9F9DE2F7620AD001A2290 /* GroceryItem.swift */,
+				5EC9F9DF2F7620AD001A2290 /* Recipe.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		5EC9F9E32F7620AD001A2290 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				5EC159552F9D17B1007F4AD6 /* QuantityMerger.swift */,
+				5EC9F9E12F7620AD001A2290 /* IngredientCategorizer.swift */,
+				5EC9F9E22F7620AD001A2290 /* RecipeFetcher.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5E09BCED2F9EDF4400E53EEC /* ShareExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E09BCFD2F9EDF4400E53EEC /* Build configuration list for PBXNativeTarget "ShareExtension" */;
+			buildPhases = (
+				5E09BCEA2F9EDF4400E53EEC /* Sources */,
+				5E09BCEB2F9EDF4400E53EEC /* Frameworks */,
+				5E09BCEC2F9EDF4400E53EEC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5E09BCEF2F9EDF4400E53EEC /* ShareExtension */,
+			);
+			name = ShareExtension;
+			packageProductDependencies = (
+			);
+			productName = ShareExtension;
+			productReference = 5E09BCEE2F9EDF4400E53EEC /* ShareExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		5E20F9D72F66DB7100731417 /* Roseburg */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E20F9FD2F66DB7300731417 /* Build configuration list for PBXNativeTarget "Roseburg" */;
+			buildPhases = (
+				5E20F9D42F66DB7100731417 /* Sources */,
+				5E20F9D52F66DB7100731417 /* Frameworks */,
+				5E20F9D62F66DB7100731417 /* Resources */,
+				5E09BCF92F9EDF4400E53EEC /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5E09BCF72F9EDF4400E53EEC /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5E8A8D782F950C7A00E95CDA /* Architecture */,
+			);
+			name = Roseburg;
+			productName = Roseburg;
+			productReference = 5E20F9D82F66DB7100731417 /* Roseburg.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5E20F9E82F66DB7300731417 /* RoseburgTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E20FA002F66DB7300731417 /* Build configuration list for PBXNativeTarget "RoseburgTests" */;
+			buildPhases = (
+				5E20F9E52F66DB7300731417 /* Sources */,
+				5E20F9E62F66DB7300731417 /* Frameworks */,
+				5E20F9E72F66DB7300731417 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5E20F9EB2F66DB7300731417 /* PBXTargetDependency */,
+			);
+			name = RoseburgTests;
+			productName = RoseburgTests;
+			productReference = 5E20F9E92F66DB7300731417 /* RoseburgTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		5E20F9F22F66DB7300731417 /* RoseburgUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E20FA032F66DB7300731417 /* Build configuration list for PBXNativeTarget "RoseburgUITests" */;
+			buildPhases = (
+				5E20F9EF2F66DB7300731417 /* Sources */,
+				5E20F9F02F66DB7300731417 /* Frameworks */,
+				5E20F9F12F66DB7300731417 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5E20F9F52F66DB7300731417 /* PBXTargetDependency */,
+			);
+			name = RoseburgUITests;
+			productName = RoseburgUITests;
+			productReference = 5E20F9F32F66DB7300731417 /* RoseburgUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5E20F9D02F66DB7100731417 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 2640;
+				TargetAttributes = {
+					5E09BCED2F9EDF4400E53EEC = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
+					5E20F9D72F66DB7100731417 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					5E20F9E82F66DB7300731417 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = 5E20F9D72F66DB7100731417;
+					};
+					5E20F9F22F66DB7300731417 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = 5E20F9D72F66DB7100731417;
+					};
+				};
+			};
+			buildConfigurationList = 5E20F9D32F66DB7100731417 /* Build configuration list for PBXProject "Roseburg" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5E20F9CF2F66DB7100731417;
+			packageReferences = (
+				5EC9F9E82F762152001A2290 /* XCLocalSwiftPackageReference "../SwiftSoup" */,
+			);
+			productRefGroup = 5E20F9D92F66DB7100731417 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5E20F9D72F66DB7100731417 /* Roseburg */,
+				5E20F9E82F66DB7300731417 /* RoseburgTests */,
+				5E20F9F22F66DB7300731417 /* RoseburgUITests */,
+				5E09BCED2F9EDF4400E53EEC /* ShareExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5E09BCEC2F9EDF4400E53EEC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E20F9D62F66DB7100731417 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E20F9E42F66DB7200731417 /* Preview Assets.xcassets in Resources */,
+				5E20F9E02F66DB7200731417 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E20F9E72F66DB7300731417 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E20F9F12F66DB7300731417 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5E09BCEA2F9EDF4400E53EEC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E20F9D42F66DB7100731417 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E20F9DE2F66DB7100731417 /* ContentView.swift in Sources */,
+				5EC9F9DD2F762099001A2290 /* GroceryListViewModel.swift in Sources */,
+				5EC9F9E42F7620AD001A2290 /* IngredientCategorizer.swift in Sources */,
+				5EC9F9E52F7620AD001A2290 /* Recipe.swift in Sources */,
+				5EC9F9E62F7620AD001A2290 /* GroceryItem.swift in Sources */,
+				5EC9F9E72F7620AD001A2290 /* RecipeFetcher.swift in Sources */,
+				5E20F9DC2F66DB7100731417 /* RoseburgApp.swift in Sources */,
+				5EA390022F94FE7D0013B276 /* RoseburgShortcuts.swift in Sources */,
+				5EA390032F94FE7D0013B276 /* GroceryItemEntity.swift in Sources */,
+				5EA390042F94FE7D0013B276 /* OrganizeByAisleIntent.swift in Sources */,
+				5EC159572F9D17B1007F4AD6 /* QuantityMerger.swift in Sources */,
+				5EA38FFE2F94FE510013B276 /* GroceryDataStore.swift in Sources */,
+				5EC9F9EC2F763129001A2290 /* RecipeDetailView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E20F9E52F66DB7300731417 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E20F9EE2F66DB7300731417 /* RoseburgTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E20F9EF2F66DB7300731417 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E20F9FA2F66DB7300731417 /* RoseburgUITestsLaunchTests.swift in Sources */,
+				5E20F9F82F66DB7300731417 /* RoseburgUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5E09BCF72F9EDF4400E53EEC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5E09BCED2F9EDF4400E53EEC /* ShareExtension */;
+			targetProxy = 5E09BCF62F9EDF4400E53EEC /* PBXContainerItemProxy */;
+		};
+		5E20F9EB2F66DB7300731417 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5E20F9D72F66DB7100731417 /* Roseburg */;
+			targetProxy = 5E20F9EA2F66DB7300731417 /* PBXContainerItemProxy */;
+		};
+		5E20F9F52F66DB7300731417 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5E20F9D72F66DB7100731417 /* Roseburg */;
+			targetProxy = 5E20F9F42F66DB7300731417 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5E09BCFA2F9EDF4400E53EEC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mindframe.ListToShop.ShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5E09BCFB2F9EDF4400E53EEC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mindframe.ListToShop.ShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5E20F9FB2F66DB7300731417 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = V68ZQE6A5Z;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		5E20F9FC2F66DB7300731417 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = V68ZQE6A5Z;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		5E20F9FE2F66DB7300731417 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				AUTOMATION_APPLE_EVENTS = NO;
+				CODE_SIGN_ENTITLEMENTS = Roseburg/Roseburg.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"Roseburg/Preview Content\"";
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Roseburg/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ListToShop;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mindframe.ListToShop;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
+				RUNTIME_EXCEPTION_ALLOW_JIT = NO;
+				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
+				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
+				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = NO;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		5E20F9FF2F66DB7300731417 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				AUTOMATION_APPLE_EVENTS = NO;
+				CODE_SIGN_ENTITLEMENTS = Roseburg/Roseburg.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"Roseburg/Preview Content\"";
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Roseburg/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ListToShop;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mindframe.ListToShop;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
+				RUNTIME_EXCEPTION_ALLOW_JIT = NO;
+				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
+				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
+				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = NO;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		5E20FA012F66DB7300731417 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mindframe.RoseburgTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Roseburg.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Roseburg";
+			};
+			name = Debug;
+		};
+		5E20FA022F66DB7300731417 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mindframe.RoseburgTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Roseburg.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Roseburg";
+			};
+			name = Release;
+		};
+		5E20FA042F66DB7300731417 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mindframe.RoseburgUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Roseburg;
+			};
+			name = Debug;
+		};
+		5E20FA052F66DB7300731417 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mindframe.RoseburgUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Roseburg;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5E09BCFD2F9EDF4400E53EEC /* Build configuration list for PBXNativeTarget "ShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E09BCFA2F9EDF4400E53EEC /* Debug */,
+				5E09BCFB2F9EDF4400E53EEC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E20F9D32F66DB7100731417 /* Build configuration list for PBXProject "Roseburg" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E20F9FB2F66DB7300731417 /* Debug */,
+				5E20F9FC2F66DB7300731417 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E20F9FD2F66DB7300731417 /* Build configuration list for PBXNativeTarget "Roseburg" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E20F9FE2F66DB7300731417 /* Debug */,
+				5E20F9FF2F66DB7300731417 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E20FA002F66DB7300731417 /* Build configuration list for PBXNativeTarget "RoseburgTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E20FA012F66DB7300731417 /* Debug */,
+				5E20FA022F66DB7300731417 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E20FA032F66DB7300731417 /* Build configuration list for PBXNativeTarget "RoseburgUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E20FA042F66DB7300731417 /* Debug */,
+				5E20FA052F66DB7300731417 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		5EC9F9E82F762152001A2290 /* XCLocalSwiftPackageReference "../SwiftSoup" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../SwiftSoup;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5EC9F9E92F762152001A2290 /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftSoup;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 5E20F9D02F66DB7100731417 /* Project object */;
+}
