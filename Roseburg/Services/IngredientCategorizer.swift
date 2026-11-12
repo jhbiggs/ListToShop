@@ -262,7 +262,10 @@ struct IngredientCategorizer {
     private static func splitQuantityAndName(_ raw: String) -> (quantity: String, name: String) {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let quantityPattern = #"^([\d½¼¾⅓⅔⅛/.\-–]+\s*(?:cups?|C|c|tablespoons?|tbsp|T|teaspoons?|tsp|t|ounces?|oz|pounds?|lbs?|lb|gallons?|gal|quarts?|qt|pints?|pt|liters?|ml|cloves?|cans?|jars?|bags?|boxes?|packages?|bunch(?:es)?|heads?|stalks?|slices?|pieces?|pinch(?:es)?|dash(?:es)?|handfuls?|sprigs?|large|medium|small|whole)\.?[\s,]*(?:\([^)]*\)\s*)?)"#
+        // Full unit names match in any case ("2 Tablespoons"); single letters stay case-sensitive
+        // because T = tablespoon and t = teaspoon. The lookahead stops a unit from matching
+        // the start of a longer word, which turned "2 Tablespoons" into "2 T" + "ablespoons".
+        let quantityPattern = #"^([\d½¼¾⅓⅔⅛/.\-–]+\s*(?:(?i:cups?|tablespoons?|tbsps?|teaspoons?|tsps?|ounces?|oz|pounds?|lbs?|gallons?|gal|quarts?|qt|pints?|pt|liters?|ml|cloves?|cans?|jars?|bags?|boxes?|packages?|bunch(?:es)?|heads?|stalks?|slices?|pieces?|pinch(?:es)?|dash(?:es)?|handfuls?|sprigs?|large|medium|small|whole)|C|c|T|t)(?![A-Za-z])\.?[\s,]*(?:\([^)]*\)\s*)?)"#
 
         if let range = trimmed.range(of: quantityPattern, options: .regularExpression, range: trimmed.startIndex..<trimmed.endIndex) {
             let quantity = String(trimmed[range]).trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: ","))
