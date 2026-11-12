@@ -57,11 +57,19 @@ enum RecipeTimeEstimator {
 
 
 struct RecipeFetchResult {
+    /// Which part of the page the recipe was read from.
+    enum Source: String {
+        case jsonLD = "JSON-LD"
+        case html = "HTML"
+    }
+
     let title: String
     let ingredients: [String]
     let steps: [Any]?
     /// Total time to make the recipe, from the page's totalTime (or prepTime + cookTime). Nil if the page doesn't say.
     var totalMinutes: Int? = nil
+    /// JSON-LD unless the recipe came from the HTML fallback. Used by the recipe-site tests.
+    var source: Source = .jsonLD
 }
 
 enum RecipeFetchError: LocalizedError {
@@ -275,7 +283,7 @@ struct RecipeFetcher {
         let title = try titleEl?.text() ?? doc.title()
         
         let stepsCandidates = try doc.select("[class*=instruction] li, [id*=instruction] li, .wprm-recipe-instruction")
-        guard !stepsCandidates.isEmpty() else { return RecipeFetchResult(title: title, ingredients: ingredients, steps: nil) }
+        guard !stepsCandidates.isEmpty() else { return RecipeFetchResult(title: title, ingredients: ingredients, steps: nil, source: .html) }
         var steps: [String] = []
         for el in stepsCandidates {
             let text = try el.text().trimmingCharacters(in: .whitespacesAndNewlines)
@@ -284,6 +292,6 @@ struct RecipeFetcher {
             }
         }
 
-        return RecipeFetchResult(title: title, ingredients: ingredients, steps: steps)
+        return RecipeFetchResult(title: title, ingredients: ingredients, steps: steps, source: .html)
     }
 }

@@ -27,6 +27,8 @@
 		5EC9F9E72F7620AD001A2290 /* RecipeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F9E22F7620AD001A2290 /* RecipeFetcher.swift */; };
 		5EC9F9EA2F762152001A2290 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5EC9F9E92F762152001A2290 /* SwiftSoup */; };
 		5EC9F9EC2F763129001A2290 /* RecipeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F9EB2F763129001A2290 /* RecipeDetailView.swift */; };
+		4B9902E3A1A04863BD404E5F /* IngredientParsingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073B429730B04DE4A8FFAC50 /* IngredientParsingTests.swift */; };
+		B88D1FF4FA5D4940A4254532 /* RecipeSiteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E8803DEBE4452EA97B6525 /* RecipeSiteTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +94,8 @@
 		5EC9F9E12F7620AD001A2290 /* IngredientCategorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientCategorizer.swift; sourceTree = "<group>"; };
 		5EC9F9E22F7620AD001A2290 /* RecipeFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFetcher.swift; sourceTree = "<group>"; };
 		5EC9F9EB2F763129001A2290 /* RecipeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailView.swift; sourceTree = "<group>"; };
+		073B429730B04DE4A8FFAC50 /* IngredientParsingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientParsingTests.swift; sourceTree = "<group>"; };
+		63E8803DEBE4452EA97B6525 /* RecipeSiteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSiteTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -197,6 +201,8 @@
 			isa = PBXGroup;
 			children = (
 				5E20F9ED2F66DB7300731417 /* RoseburgTests.swift */,
+				073B429730B04DE4A8FFAC50 /* IngredientParsingTests.swift */,
+				63E8803DEBE4452EA97B6525 /* RecipeSiteTests.swift */,
 			);
 			path = RoseburgTests;
 			sourceTree = "<group>";
@@ -437,6 +443,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E20F9EE2F66DB7300731417 /* RoseburgTests.swift in Sources */,
+				4B9902E3A1A04863BD404E5F /* IngredientParsingTests.swift in Sources */,
+				B88D1FF4FA5D4940A4254532 /* RecipeSiteTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
