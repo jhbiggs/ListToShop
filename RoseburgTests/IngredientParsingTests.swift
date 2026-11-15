@@ -125,8 +125,9 @@ final class IngredientParsingTests: XCTestCase {
     /// The model's answers vary a little between runs, so a single miss is worth re-running before fixing.
     func testAppleIntelligenceParser() async throws {
         #if canImport(FoundationModels)
-        guard case .available = SystemLanguageModel.default.availability else {
-            throw XCTSkip("Apple Intelligence isn't available on this device or simulator.")
+        let availability = SystemLanguageModel.default.availability
+        guard case .available = availability else {
+            throw XCTSkip("Apple Intelligence unavailable: \(String(describing: availability))")
         }
 
         let cases = IngredientCorpus.cases

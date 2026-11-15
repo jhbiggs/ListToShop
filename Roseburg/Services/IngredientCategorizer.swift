@@ -15,6 +15,9 @@ import FoundationModels
 /// A single categorized ingredient returned by the on-device LLM.
 @Generable
 struct CategorizedIngredient {
+    @Guide(description: "The line number from the list this item came from. Copy it exactly.")
+    var lineNumber: Int
+
     @Guide(description: "The short, cleaned-up ingredient name (e.g. 'chicken breast', 'olive oil').")
     var name: String
 
@@ -42,21 +45,51 @@ struct IngredientCategorizer {
     #if canImport(FoundationModels)
     /// Uses the on-device Apple Intelligence model to parse raw ingredient strings
     /// into structured, categorized grocery items.
+    ///
+    /// The list goes in small batches, and each answer is matched back to its line by
+    /// number rather than by position. A line the model skips falls back to keyword parsing.
     static func categorize(_ rawIngredients: [String]) async throws -> [(name: String, quantity: String, category: AisleCategory)] {
+        let batchSize = 10
+        var output: [(name: String, quantity: String, category: AisleCategory)] = []
 
+        for start in stride(from: 0, to: rawIngredients.count, by: batchSize) {
+            let end = min(start + batchSize, rawIngredients.count)
+            let batch = Array(rawIngredients[start..<end])
+            let answers = (try? await categorizeBatch(batch, firstLineNumber: start + 1, allLines: rawIngredients)) ?? [:]
+
+            for (offset, raw) in batch.enumerated() {
+                if let answer = answers[start + offset + 1] {
+                    output.append(answer)
+                } else {
+                    let fallback = categorizeWithKeywords([raw]).first
+                    output.append((name: fallback?.name ?? raw, quantity: fallback?.quantity ?? "", category: fallback?.category ?? .other))
+                }
+            }
+        }
+        return output
+    }
+
+    /// Sends one batch to the model. Returns answers keyed by line number across the whole list.
+    private static func categorizeBatch(
+        _ batch: [String],
+        firstLineNumber: Int,
+        allLines: [String]
+    ) async throws -> [Int: (name: String, quantity: String, category: AisleCategory)] {
         let session = LanguageModelSession()
 
-        let ingredientList = rawIngredients
+        let ingredientList = batch
             .enumerated()
-            .map { "\($0.offset + 1). \($0.element)" }
+            .map { "\(firstLineNumber + $0.offset). \($0.element)" }
             .joined(separator: "\n")
 
         let prompt = """
-        You are a grocery store assistant. For each ingredient below, extract:
-        1. A short, clean ingredient name — just the food item, no quantities, units, or preparation notes. For example: "olive oil", "parsley", "shrimp", "orzo".
-        2. The quantity and unit exactly as written (e.g. "2 lbs", "1/4 cup", "4 tablespoons"). Use empty string if not specified.
-        3. The grocery store aisle category.
+        You are a grocery store assistant. For each numbered ingredient below, extract:
+        1. The line number, copied exactly from the list.
+        2. A short, clean ingredient name — just the food item, no quantities, units, or preparation notes. For example: "olive oil", "parsley", "shrimp", "orzo".
+        3. The quantity and unit exactly as written (e.g. "2 lbs", "1/4 cup", "4 tablespoons"). Use empty string if not specified.
+        4. The grocery store aisle category.
 
+        Return one answer per numbered line. Do not merge lines, skip lines, or move a quantity to a different line.
         IMPORTANT: The name must NEVER start with a period, unit abbreviation, or number. Only the food name.
         Never remove letters from the start of a word: "Cloves garlic" is "garlic" with a 3-clove quantity, not "loves garlic".
 
@@ -69,11 +102,14 @@ struct IngredientCategorizer {
             generating: CategorizedIngredientList.self
         )
 
-        return response.content.ingredients.map { item in
+        let validNumbers = firstLineNumber..<(firstLineNumber + batch.count)
+        var answers: [Int: (name: String, quantity: String, category: AisleCategory)] = [:]
+        for item in response.content.ingredients where validNumbers.contains(item.lineNumber) && answers[item.lineNumber] == nil {
             let category = AisleCategory(rawValue: item.category.lowercased()) ?? .other
-            let cleanedName = repairName(cleanAIName(item.name), rawIngredients: rawIngredients)
-            return (name: cleanedName, quantity: item.quantity, category: category)
+            let cleanedName = repairName(cleanAIName(item.name), rawIngredients: allLines)
+            answers[item.lineNumber] = (name: cleanedName, quantity: item.quantity, category: category)
         }
+        return answers
     }
     #endif
 
