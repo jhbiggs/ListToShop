@@ -265,11 +265,32 @@ struct IngredientCategorizer {
         // Full unit names match in any case ("2 Tablespoons"); single letters stay case-sensitive
         // because T = tablespoon and t = teaspoon. The lookahead stops a unit from matching
         // the start of a longer word, which turned "2 Tablespoons" into "2 T" + "ablespoons".
-        let quantityPattern = #"^([\d½¼¾⅓⅔⅛/.\-–]+\s*(?:(?i:cups?|tablespoons?|tbsps?|teaspoons?|tsps?|ounces?|oz|pounds?|lbs?|gallons?|gal|quarts?|qt|pints?|pt|liters?|ml|cloves?|cans?|jars?|bags?|boxes?|packages?|bunch(?:es)?|heads?|stalks?|slices?|pieces?|pinch(?:es)?|dash(?:es)?|handfuls?|sprigs?|large|medium|small|whole)|C|c|T|t)(?![A-Za-z])\.?[\s,]*(?:\([^)]*\)\s*)?)"#
+        // The amount, in order: the number; an optional mixed fraction ("1 1/2"); ranges and
+        // "plus" ("2 to 3", "½ plus ⅛"); a size after a count ("1 14-ounce", "1 28oz.");
+        // parenthetical sizes ("(15 oz)"); a multiplier ("2 x 400g"); a descriptor ("heaping");
+        // an optional unit; and a slash size ("600g / 1.2lb"). A unit stops at a letter, so
+        // "tablespoons" is never cut down to "T". Numbers with no unit ("3 eggs") are still amounts.
+        let number = #"[\d½¼¾⅓⅔⅛/.\-–]+"#
+        let mixedFraction = #"(?:\s+(?:\d+/\d+|[½¼¾⅓⅔⅛]))?"#
+        let rangeOrPlus = #"(?:\s*(?:plus|to|and|or|\+|-|–)\s*[\d½¼¾⅓⅔⅛/.]+)*"#
+        let sizeAfterCount = #"(?:\s+\d[\d.]*[\s-]?(?:ounces?|oz|pounds?|lbs?|grams?|g|kg|ml|inch|inches)\b\.?)?"#
+        let parens = #"(?:\s*\([^)]*\))*"#
+        let multiplier = #"(?:\s*[x×]\s*[\d.]+[a-z]*)?"#
+        let descriptor = #"(?:\s*(?:heaping|level|scant|generous|rounded)\s+)?"#
+        let unit = #"(?:\s*(?:(?i:cups?|tablespoons?|tbsps?|tbs|teaspoons?|tsps?|ounces?|oz|pounds?|lbs?|gallons?|gal|quarts?|qt|pints?|pt|liters?|ml|grams?|kg|g|tins?|cans?|cloves?|jars?|bags?|boxes?|packages?|envelopes?|sticks?|links?|fillets?|bulbs?|rashers?|cubes?|bunch(?:es)?|heads?|stalks?|slices?|pieces?|ears?|pinch(?:es)?|dash(?:es)?|handfuls?|sprigs?|large|medium|small|whole)|C|c|T|t)(?![A-Za-z]))?"#
+        let slashSize = #"(?:\s*/\s*[\d.]+\s*[a-z]+)?"#
+        // A second amount after a comma-less range ("1 1/4 cups (284g) to 1 1/2 cups (340g)") and
+        // a "+ 1 tsp." addition ("1 Tbsp. + 1 tsp. honey") are consumed as part of the amount.
+        let rangeTail = #"(?:\s*(?:to|or|-|–)\s*[\d½¼¾⅓⅔⅛/. ]+\s*[a-zA-Z]+(?:\s*\([^)]*\))*)?"#
+        let plusTail = #"(?:\s*\+\s*[\d½¼¾⅓⅔⅛/.]+\s*(?:[a-zA-Z]+)?\.?)?"#
+        let quantityPattern = "^" + number + mixedFraction + rangeOrPlus + sizeAfterCount + parens + multiplier + descriptor + unit + #"\.?"# + parens + rangeTail + plusTail + slashSize + #"[\s,]*"#
 
         if let range = trimmed.range(of: quantityPattern, options: .regularExpression, range: trimmed.startIndex..<trimmed.endIndex) {
             let quantity = String(trimmed[range]).trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: ","))
-            let name = String(trimmed[range.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: ","))
+            let name = String(trimmed[range.upperBound...])
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .trimmingCharacters(in: CharacterSet(charactersIn: ","))
+                .replacingOccurrences(of: #"^of\s+"#, with: "", options: .regularExpression)
             if !name.isEmpty {
                 return (quantity, name)
             }
@@ -329,6 +350,10 @@ struct IngredientCategorizer {
                 options: .regularExpression
             )
         }
+
+        // Leftovers: nested parentheses, footnote stars, and a dangling "and"/"or" after modifiers were removed.
+        name = name.replacingOccurrences(of: #"[()*]"#, with: "", options: .regularExpression)
+        name = name.replacingOccurrences(of: #"[,\s]+(and|or)\s*$"#, with: "", options: .regularExpression)
 
         name = name.replacingOccurrences(of: #"\s{2,}"#, with: " ", options: .regularExpression)
             .trimmingCharacters(in: .whitespacesAndNewlines)

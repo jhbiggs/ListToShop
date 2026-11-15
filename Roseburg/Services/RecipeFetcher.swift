@@ -193,11 +193,12 @@ struct RecipeFetcher {
         }
         guard isRecipe else { return nil }
 
-        let title = dict["name"] as? String ?? "Untitled Recipe"
-        guard let ingredients = dict["recipeIngredient"] as? [String], !ingredients.isEmpty else {
+        let title = cleanText(dict["name"] as? String ?? "Untitled Recipe")
+        guard let rawIngredients = dict["recipeIngredient"] as? [String], !rawIngredients.isEmpty else {
             return nil
         }
         
+        let ingredients = rawIngredients.map(cleanText)
         let steps = dict["recipeInstructions"] as? [Any]
 
         let prep = minutes(fromISO8601Duration: dict["prepTime"] as? String) ?? 0
@@ -207,6 +208,26 @@ struct RecipeFetcher {
 
         print("Found recipe: \(title) with \(ingredients.count) ingredients and \(steps?.count ?? 0) steps")
         return RecipeFetchResult(title: title, ingredients: ingredients, steps: steps, totalMinutes: total)
+    }
+
+    // MARK: - Text Cleanup
+
+    /// Removes leftover HTML tags, decodes common entities, and collapses extra spaces.
+    static func cleanText(_ text: String) -> String {
+        var s = text.replacingOccurrences(of: #"<[^>]+>"#, with: " ", options: .regularExpression)
+        let entities: [(String, String)] = [
+            ("&quot;", "\""), ("&#39;", "'"), ("&#x27;", "'"), ("&apos;", "'"),
+            ("&lt;", "<"), ("&gt;", ">"), ("&nbsp;", " "),
+            ("&rsquo;", "’"), ("&lsquo;", "‘"), ("&rdquo;", "”"), ("&ldquo;", "“"),
+            ("&ndash;", "–"), ("&mdash;", "—"),
+            ("&frac12;", "½"), ("&frac14;", "¼"), ("&frac34;", "¾"),
+            ("&amp;", "&"),  // last, so "&amp;quot;" isn't decoded twice
+        ]
+        for (entity, replacement) in entities {
+            s = s.replacingOccurrences(of: entity, with: replacement)
+        }
+        s = s.replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+        return s.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     // MARK: - Time Parsing
@@ -258,7 +279,7 @@ struct RecipeFetcher {
                 }
             }
         }
-        return result
+        return result.map(cleanText)
     }
 
     // MARK: - HTML Fallback
