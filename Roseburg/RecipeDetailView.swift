@@ -90,12 +90,10 @@ struct RecipeDetailView: View {
                         } else if !matched.isEmpty {
                             VStack(alignment: .leading, spacing: 2) {
                                 ForEach(matched, id: \.name) { item in
-                                    HStack(spacing: 4) {
+                                    HStack(alignment: .top, spacing: 4) {
                                         Text("•")
-                                        Text(item.name)
-                                        if !item.quantity.isEmpty {
-                                            Text("(\(item.quantity))")
-                                        }
+                                        Text(recipeLine(for: item))
+                                            .fixedSize(horizontal: false, vertical: true)
                                     }
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
@@ -118,17 +116,12 @@ struct RecipeDetailView: View {
         }
     }
 
+    /// This recipe's own ingredient lines, as written on the page, including prep notes and amounts.
     private var ingredientsSection: some View {
         Section("Ingredients") {
-            ForEach(recipe.items) { item in
-                HStack {
-                    Text(item.name)
-                    Spacer()
-                    if !item.quantity.isEmpty {
-                        Text(item.quantity)
-                            .foregroundStyle(.secondary)
-                    }
-                }
+            ForEach(Array(recipe.rawIngredients.enumerated()), id: \.offset) { _, line in
+                Text(line)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
@@ -139,6 +132,16 @@ struct RecipeDetailView: View {
                 Label("View Original Recipe", systemImage: "safari")
             }
         }
+    }
+
+    /// This recipe's own line for a grocery item, so the step shows the same prep notes and amount
+    /// as the ingredient list, not the merged total across all recipes.
+    private func recipeLine(for item: GroceryItem) -> String {
+        let key = IngredientMatcher.key(for: item.name)
+        let lines = zip(recipe.lineItemKeys, recipe.rawIngredients)
+            .filter { $0.0 == key }
+            .map(\.1)
+        return lines.isEmpty ? item.name : lines.joined(separator: "; ")
     }
 
     // MARK: - Ingredient Matching

@@ -19,6 +19,8 @@ final class Recipe {
     var totalMinutes: Int? = nil
     /// True when the time came from the on-device model rather than the recipe page.
     var timeIsEstimated: Bool = false
+    /// For each ingredient line, the grocery item key it was merged into. Parallel to `rawIngredients`.
+    var lineItemKeys: [String] = []
 
     /// Ingredients this recipe needs. Deleting a recipe does not delete shared items;
     /// the view model removes items that no longer belong to any recipe.

@@ -153,6 +153,14 @@ final class GroceryListViewModel {
                 }
             }
 
+            // Remember which grocery item each recipe line went into, so the recipe can show its own lines.
+            if categorized.count == result.ingredients.count {
+                recipe.lineItemKeys = categorized.map { entry in
+                    let key = IngredientMatcher.key(for: entry.name)
+                    return aliases[key] ?? key
+                }
+            }
+
             // 7. Fold aliased entries into their targets.
             var merged: [String: Incoming] = [:]
             for (key, entry) in incoming {

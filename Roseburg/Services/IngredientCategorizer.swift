@@ -319,14 +319,33 @@ struct IngredientCategorizer {
         // a "+ 1 tsp." addition ("1 Tbsp. + 1 tsp. honey") are consumed as part of the amount.
         let rangeTail = #"(?:\s*(?:to|or|-|–)\s*[\d½¼¾⅓⅔⅛/. ]+\s*[a-zA-Z]+(?:\s*\([^)]*\))*)?"#
         let plusTail = #"(?:\s*\+\s*[\d½¼¾⅓⅔⅛/.]+\s*(?:[a-zA-Z]+)?\.?)?"#
-        let quantityPattern = "^" + number + mixedFraction + rangeOrPlus + sizeAfterCount + parens + multiplier + descriptor + unit + #"\.?"# + parens + rangeTail + plusTail + slashSize + #"[\s,]*"#
+        // A gram weight after the unit ("2 Tablespoons 30g chili crunch") is part of the amount.
+        let gramsAfterUnit = #"(?:\s+\d[\d.]*\s*(?:g|grams?|kg|ml)\b)?"#
+        let quantityPattern = "^" + number + mixedFraction + rangeOrPlus + sizeAfterCount + parens + multiplier + descriptor + unit + gramsAfterUnit + #"\.?"# + parens + rangeTail + plusTail + slashSize + #"[\s,]*"#
 
         if let range = trimmed.range(of: quantityPattern, options: .regularExpression, range: trimmed.startIndex..<trimmed.endIndex) {
-            let quantity = String(trimmed[range]).trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: ","))
-            let name = String(trimmed[range.upperBound...])
+            var quantity = String(trimmed[range]).trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: ","))
+            var name = String(trimmed[range.upperBound...])
                 .trimmingCharacters(in: .whitespacesAndNewlines)
                 .trimmingCharacters(in: CharacterSet(charactersIn: ","))
                 .replacingOccurrences(of: #"^of\s+"#, with: "", options: .regularExpression)
+
+            // "3 medium (about 20 oz Zucchini Squash, cut into noodles*)": the amount pattern took the
+            // whole parenthesis. The food is inside it, and the amount is what comes before it.
+            if name.isEmpty, let open = trimmed.firstIndex(of: "("), let close = trimmed.lastIndex(of: ")"), open < close {
+                quantity = String(trimmed[..<open])
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .trimmingCharacters(in: CharacterSet(charactersIn: ","))
+                name = String(trimmed[trimmed.index(after: open)..<close])
+            }
+
+            // "about 20 oz" describes the amount, so it doesn't belong in the food name.
+            name = name.replacingOccurrences(
+                of: #"^(?:about|approximately|approx\.?|roughly|around)\s+[\d½¼¾⅓⅔⅛/. ]+(?:oz|ounces?|g|grams?|lbs?|pounds?|ml)?\s+"#,
+                with: "",
+                options: [.regularExpression, .caseInsensitive]
+            )
+
             if !name.isEmpty {
                 return (quantity, name)
             }
@@ -358,6 +377,12 @@ struct IngredientCategorizer {
         }
 
         name = name.replacingOccurrences(of: #"\([^)]*\)"#, with: "", options: .regularExpression)
+        // Anything after a comma is preparation or a note ("zucchini squash, cut into noodles").
+        if let comma = name.firstIndex(of: ",") {
+            name = String(name[..<comma])
+        }
+        // "cut into …" with no comma before it is preparation too.
+        name = name.replacingOccurrences(of: #"\s+cut\s+(?:into|in|up|on)\b.*$"#, with: "", options: .regularExpression)
 
         let modifiers = [
             "freshly", "fresh", "finely", "thinly", "thickly", "roughly", "coarsely",

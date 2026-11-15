@@ -91,6 +91,9 @@ enum IngredientCorpus {
         IngredientCase(line: "Zest of 1 orange", name: "Orange", quantity: nil),
         IngredientCase(line: "A pinch of red pepper flakes", name: "Red pepper flakes", quantity: nil),
         IngredientCase(line: "1 Tbsp. + 1 tsp. honey", name: "Honey", quantity: nil),
+
+        // Approximate amounts and preparation after the food
+        IngredientCase(line: "3 medium, about 20 oz zucchini squash cut into noodles", name: "Zucchini squash", quantity: nil),
     ]
 }
 
