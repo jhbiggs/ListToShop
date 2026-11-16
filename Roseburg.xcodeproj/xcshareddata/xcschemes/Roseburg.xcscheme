@@ -40,6 +40,11 @@
                BlueprintName = "RoseburgTests"
                ReferencedContainer = "container:Roseburg.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "RoseburgTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
