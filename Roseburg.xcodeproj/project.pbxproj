@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4B9902E3A1A04863BD404E5F /* IngredientParsingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073B429730B04DE4A8FFAC50 /* IngredientParsingTests.swift */; };
 		5E09BCF82F9EDF4400E53EEC /* ShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5E09BCEE2F9EDF4400E53EEC /* ShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		5E20F9DC2F66DB7100731417 /* RoseburgApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E20F9DB2F66DB7100731417 /* RoseburgApp.swift */; };
 		5E20F9DE2F66DB7100731417 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E20F9DD2F66DB7100731417 /* ContentView.swift */; };
 		5E20F9E02F66DB7200731417 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E20F9DF2F66DB7200731417 /* Assets.xcassets */; };
 		5E20F9E42F66DB7200731417 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E20F9E32F66DB7200731417 /* Preview Assets.xcassets */; };
+		5E20F9F82F66DB7300731417 /* RoseburgUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E20F9F72F66DB7300731417 /* RoseburgUITests.swift */; };
+		5E20F9FA2F66DB7300731417 /* RoseburgUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E20F9F92F66DB7300731417 /* RoseburgUITestsLaunchTests.swift */; };
 		5EA38FFE2F94FE510013B276 /* GroceryDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA38FFD2F94FE510013B276 /* GroceryDataStore.swift */; };
 		5EA390022F94FE7D0013B276 /* RoseburgShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA390012F94FE7D0013B276 /* RoseburgShortcuts.swift */; };
 		5EA390032F94FE7D0013B276 /* GroceryItemEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA38FFF2F94FE7D0013B276 /* GroceryItemEntity.swift */; };
@@ -25,6 +26,7 @@
 		5EC9F9E72F7620AD001A2290 /* RecipeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F9E22F7620AD001A2290 /* RecipeFetcher.swift */; };
 		5EC9F9EA2F762152001A2290 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5EC9F9E92F762152001A2290 /* SwiftSoup */; };
 		5EC9F9EC2F763129001A2290 /* RecipeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F9EB2F763129001A2290 /* RecipeDetailView.swift */; };
+		4B9902E3A1A04863BD404E5F /* IngredientParsingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073B429730B04DE4A8FFAC50 /* IngredientParsingTests.swift */; };
 		B88D1FF4FA5D4940A4254532 /* RecipeSiteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E8803DEBE4452EA97B6525 /* RecipeSiteTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +39,13 @@
 			remoteInfo = ShareExtension;
 		};
 		5E20F9EA2F66DB7300731417 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5E20F9D02F66DB7100731417 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5E20F9D72F66DB7100731417;
+			remoteInfo = Roseburg;
+		};
+		5E20F9F42F66DB7300731417 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5E20F9D02F66DB7100731417 /* Project object */;
 			proxyType = 1;
@@ -60,7 +69,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		073B429730B04DE4A8FFAC50 /* IngredientParsingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientParsingTests.swift; sourceTree = "<group>"; };
 		5E09BCEE2F9EDF4400E53EEC /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E09BCFE2F9EE10300E53EEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		5E20F9D82F66DB7100731417 /* Roseburg.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Roseburg.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -70,6 +78,7 @@
 		5E20F9E12F66DB7200731417 /* Roseburg.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Roseburg.entitlements; sourceTree = "<group>"; };
 		5E20F9E32F66DB7200731417 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5E20F9E92F66DB7300731417 /* RoseburgTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoseburgTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E20F9F32F66DB7300731417 /* RoseburgUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoseburgUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E20F9F72F66DB7300731417 /* RoseburgUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoseburgUITests.swift; sourceTree = "<group>"; };
 		5E20F9F92F66DB7300731417 /* RoseburgUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoseburgUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		5EA38FFD2F94FE510013B276 /* GroceryDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryDataStore.swift; sourceTree = "<group>"; };
@@ -83,6 +92,7 @@
 		5EC9F9E12F7620AD001A2290 /* IngredientCategorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientCategorizer.swift; sourceTree = "<group>"; };
 		5EC9F9E22F7620AD001A2290 /* RecipeFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFetcher.swift; sourceTree = "<group>"; };
 		5EC9F9EB2F763129001A2290 /* RecipeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailView.swift; sourceTree = "<group>"; };
+		073B429730B04DE4A8FFAC50 /* IngredientParsingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientParsingTests.swift; sourceTree = "<group>"; };
 		63E8803DEBE4452EA97B6525 /* RecipeSiteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSiteTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -124,6 +134,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5E20F9F02F66DB7300731417 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -143,6 +160,7 @@
 			children = (
 				5E20F9D82F66DB7100731417 /* Roseburg.app */,
 				5E20F9E92F66DB7300731417 /* RoseburgTests.xctest */,
+				5E20F9F32F66DB7300731417 /* RoseburgUITests.xctest */,
 				5E09BCEE2F9EDF4400E53EEC /* ShareExtension.appex */,
 			);
 			name = Products;
@@ -288,6 +306,24 @@
 			productReference = 5E20F9E92F66DB7300731417 /* RoseburgTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		5E20F9F22F66DB7300731417 /* RoseburgUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E20FA032F66DB7300731417 /* Build configuration list for PBXNativeTarget "RoseburgUITests" */;
+			buildPhases = (
+				5E20F9EF2F66DB7300731417 /* Sources */,
+				5E20F9F02F66DB7300731417 /* Frameworks */,
+				5E20F9F12F66DB7300731417 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5E20F9F52F66DB7300731417 /* PBXTargetDependency */,
+			);
+			name = RoseburgUITests;
+			productName = RoseburgUITests;
+			productReference = 5E20F9F32F66DB7300731417 /* RoseburgUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -305,6 +341,10 @@
 						CreatedOnToolsVersion = 15.4;
 					};
 					5E20F9E82F66DB7300731417 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = 5E20F9D72F66DB7100731417;
+					};
+					5E20F9F22F66DB7300731417 = {
 						CreatedOnToolsVersion = 15.4;
 						TestTargetID = 5E20F9D72F66DB7100731417;
 					};
@@ -328,6 +368,7 @@
 			targets = (
 				5E20F9D72F66DB7100731417 /* Roseburg */,
 				5E20F9E82F66DB7300731417 /* RoseburgTests */,
+				5E20F9F22F66DB7300731417 /* RoseburgUITests */,
 				5E09BCED2F9EDF4400E53EEC /* ShareExtension */,
 			);
 		};
@@ -351,6 +392,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5E20F9E72F66DB7300731417 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E20F9F12F66DB7300731417 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -396,6 +444,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5E20F9EF2F66DB7300731417 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E20F9FA2F66DB7300731417 /* RoseburgUITestsLaunchTests.swift in Sources */,
+				5E20F9F82F66DB7300731417 /* RoseburgUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -408,6 +465,11 @@
 			isa = PBXTargetDependency;
 			target = 5E20F9D72F66DB7100731417 /* Roseburg */;
 			targetProxy = 5E20F9EA2F66DB7300731417 /* PBXContainerItemProxy */;
+		};
+		5E20F9F52F66DB7300731417 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5E20F9D72F66DB7100731417 /* Roseburg */;
+			targetProxy = 5E20F9F42F66DB7300731417 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -422,7 +484,7 @@
 				INFOPLIST_FILE = ShareExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShareExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -452,7 +514,7 @@
 				INFOPLIST_FILE = ShareExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShareExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -749,6 +811,48 @@
 			};
 			name = Release;
 		};
+		5E20FA042F66DB7300731417 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mindframe.RoseburgUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Roseburg;
+			};
+			name = Debug;
+		};
+		5E20FA052F66DB7300731417 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mindframe.RoseburgUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Roseburg;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -784,6 +888,15 @@
 			buildConfigurations = (
 				5E20FA012F66DB7300731417 /* Debug */,
 				5E20FA022F66DB7300731417 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E20FA032F66DB7300731417 /* Build configuration list for PBXNativeTarget "RoseburgUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E20FA042F66DB7300731417 /* Debug */,
+				5E20FA052F66DB7300731417 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

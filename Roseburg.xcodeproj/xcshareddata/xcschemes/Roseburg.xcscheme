@@ -46,6 +46,17 @@
                </Test>
             </SkippedTests>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5E20F9F22F66DB7300731417"
+               BuildableName = "RoseburgUITests.xctest"
+               BlueprintName = "RoseburgUITests"
+               ReferencedContainer = "container:Roseburg.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
