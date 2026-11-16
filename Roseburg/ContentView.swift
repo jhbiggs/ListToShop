@@ -18,6 +18,7 @@ struct ContentView: View {
     @State private var showingAddItem = false
     @State private var recipesItem: GroceryItem?
     @State private var timeRecipe: Recipe?
+    @State private var recipeToClear: Recipe?
 
     var body: some View {
         NavigationStack {
@@ -27,6 +28,20 @@ struct ContentView: View {
             }
             .navigationTitle("ListToShop")
             .toolbar { toolbarContent }
+            // Errors appear over the list, so the list is still there after dismissing.
+            .alert(
+                "Couldn't add recipe",
+                isPresented: Binding(
+                    get: { viewModel?.errorMessage != nil },
+                    set: { if !$0 { viewModel?.errorMessage = nil } }
+                ),
+                actions: {
+                    Button("OK", role: .cancel) { viewModel?.errorMessage = nil }
+                },
+                message: {
+                    Text(viewModel?.errorMessage ?? "")
+                }
+            )
             .sheet(isPresented: $showingAddItem) {
                 AddItemView { newItems in
                     for item in newItems {
@@ -113,14 +128,6 @@ struct ContentView: View {
                 ProgressView("Fetching & categorizing…")
                     .padding()
                 Spacer()
-            } else if let error = vm.errorMessage {
-                ContentUnavailableView {
-                    Label("Error", systemImage: "exclamationmark.triangle")
-                } description: {
-                    Text(error)
-                } actions: {
-                    Button("Dismiss") { vm.errorMessage = nil }
-                }
             } else if vm.groceryItems.isEmpty {
                 ContentUnavailableView(
                     "No Groceries Yet",
@@ -315,13 +322,35 @@ struct ContentView: View {
                     } label: {
                         Label("Set Cook Time…", systemImage: "clock")
                     }
+                    Button(role: .destructive) {
+                        recipeToClear = recipe
+                    } label: {
+                        Label("Clear Recipe…", systemImage: "trash")
+                    }
+                }
+                .swipeActions {
+                    Button(role: .destructive) {
+                        recipeToClear = recipe
+                    } label: {
+                        Label("Clear", systemImage: "trash")
+                    }
                 }
             }
-            .onDelete { indexSet in
-                for index in indexSet {
-                    vm.deleteRecipe(vm.recipes[index])
-                }
+        }
+        .confirmationDialog(
+            "Clear this recipe?",
+            isPresented: Binding(
+                get: { recipeToClear != nil },
+                set: { if !$0 { recipeToClear = nil } }
+            ),
+            presenting: recipeToClear
+        ) { recipe in
+            Button("Clear \(recipe.title)", role: .destructive) {
+                vm.deleteRecipe(recipe)
+                recipeToClear = nil
             }
+        } message: { recipe in
+            Text("Removes \(recipe.title). Items only it needs are removed too. Shared items keep the amounts from the other recipes.")
         }
     }
 

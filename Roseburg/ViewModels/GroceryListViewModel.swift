@@ -217,15 +217,37 @@ final class GroceryListViewModel {
         fetchAll()
     }
 
+    /// Clears a recipe. Items only it needed are removed. Shared items keep the amounts
+    /// from the recipes that remain.
     func deleteRecipe(_ recipe: Recipe) {
         let linkedItems = recipe.items
         modelContext.delete(recipe)
-        // Keep shared items that another recipe or a manual entry still needs.
-        for item in linkedItems where item.recipes.allSatisfy({ $0 === recipe }) {
-            modelContext.delete(item)
+        for item in linkedItems {
+            let remaining = item.recipes.filter { $0 !== recipe }
+            if remaining.isEmpty {
+                modelContext.delete(item)
+            } else {
+                item.quantity = recalculatedQuantity(for: item, from: remaining)
+            }
         }
         try? modelContext.save()
         fetchAll()
+    }
+
+    /// Sums the amounts the remaining recipes give for this item. Recipes saved before
+    /// per-line tracking keep the item's current amount.
+    private func recalculatedQuantity(for item: GroceryItem, from recipes: [Recipe]) -> String {
+        let key = IngredientMatcher.key(for: item.name)
+        var amounts: [String] = []
+        for recipe in recipes {
+            guard recipe.lineItemKeys.count == recipe.rawIngredients.count else { return item.quantity }
+            for (index, line) in recipe.rawIngredients.enumerated() where recipe.lineItemKeys[index] == key {
+                if let amount = IngredientCategorizer.categorizeWithKeywords([line]).first?.quantity, !amount.isEmpty {
+                    amounts.append(amount)
+                }
+            }
+        }
+        return Self.mergeQuantities(amounts)
     }
 
     func deleteItem(_ item: GroceryItem) {

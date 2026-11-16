@@ -320,7 +320,7 @@ struct IngredientCategorizer {
         let rangeTail = #"(?:\s*(?:to|or|-|–)\s*[\d½¼¾⅓⅔⅛/. ]+\s*[a-zA-Z]+(?:\s*\([^)]*\))*)?"#
         let plusTail = #"(?:\s*\+\s*[\d½¼¾⅓⅔⅛/.]+\s*(?:[a-zA-Z]+)?\.?)?"#
         // A gram weight after the unit ("2 Tablespoons 30g chili crunch") is part of the amount.
-        let gramsAfterUnit = #"(?:\s+\d[\d.]*\s*(?:g|grams?|kg|ml)\b)?"#
+        let gramsAfterUnit = #"(?:\s+\d[\d.]*[\s-]?(?:inch|inches|cm|g|grams?|kg|ml|oz|ounces?)\b)?"#
         let quantityPattern = "^" + number + mixedFraction + rangeOrPlus + sizeAfterCount + parens + multiplier + descriptor + unit + gramsAfterUnit + #"\.?"# + parens + rangeTail + plusTail + slashSize + #"[\s,]*"#
 
         if let range = trimmed.range(of: quantityPattern, options: .regularExpression, range: trimmed.startIndex..<trimmed.endIndex) {
@@ -377,12 +377,6 @@ struct IngredientCategorizer {
         }
 
         name = name.replacingOccurrences(of: #"\([^)]*\)"#, with: "", options: .regularExpression)
-        // Anything after a comma is preparation or a note ("zucchini squash, cut into noodles").
-        if let comma = name.firstIndex(of: ",") {
-            name = String(name[..<comma])
-        }
-        // "cut into …" with no comma before it is preparation too.
-        name = name.replacingOccurrences(of: #"\s+cut\s+(?:into|in|up|on)\b.*$"#, with: "", options: .regularExpression)
 
         let modifiers = [
             "freshly", "fresh", "finely", "thinly", "thickly", "roughly", "coarsely",
@@ -415,6 +409,18 @@ struct IngredientCategorizer {
         // Leftovers: nested parentheses, footnote stars, and a dangling "and"/"or" after modifiers were removed.
         name = name.replacingOccurrences(of: #"[()*]"#, with: "", options: .regularExpression)
         name = name.replacingOccurrences(of: #"[,\s]+(and|or)\s*$"#, with: "", options: .regularExpression)
+
+        // Runs after the modifiers are gone, so "skinless, boneless chicken" keeps "chicken".
+        // Leading commas left by removed modifiers go first, so the comma cut can't empty the name.
+        name = name.replacingOccurrences(of: #"^[,\s]+"#, with: "", options: .regularExpression)
+        // Anything after a comma is preparation or a note ("zucchini squash, cut into noodles").
+        if let comma = name.firstIndex(of: ",") {
+            name = String(name[..<comma])
+        }
+        // "cut into …" with no comma before it is preparation too.
+        name = name.replacingOccurrences(of: #"\s+cut\s+(?:into|in|up|on)\b.*$"#, with: "", options: .regularExpression)
+        // "70% chocolate chunks" → "chocolate chunks (70%)", so the name doesn't start with a number.
+        name = name.replacingOccurrences(of: #"^(\d+%)\s+(.+)$"#, with: "$2 ($1)", options: .regularExpression)
 
         name = name.replacingOccurrences(of: #"\s{2,}"#, with: " ", options: .regularExpression)
             .trimmingCharacters(in: .whitespacesAndNewlines)

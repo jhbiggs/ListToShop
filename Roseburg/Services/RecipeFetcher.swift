@@ -74,17 +74,52 @@ struct RecipeFetchResult {
 
 enum RecipeFetchError: LocalizedError {
     case invalidURL
-    case noRecipeFound
-    case networkError(Error)
+    case noRecipeFound(host: String)
+    case httpStatus(Int, host: String)
+    case unreadablePage(host: String)
+    case network(URLError, host: String)
 
     var errorDescription: String? {
         switch self {
         case .invalidURL:
-            return "The URL is not valid."
-        case .noRecipeFound:
-            return "No recipe found on this page."
-        case .networkError(let error):
-            return "Network error: \(error.localizedDescription)"
+            return "That link isn't a valid web address."
+
+        case .noRecipeFound(let host):
+            return "No recipe found on \(host). The page has no recipe data, ingredient list, or instructions the app can read."
+
+        case .httpStatus(let code, let host):
+            switch code {
+            case 401, 403:
+                return "\(host) blocked the request (HTTP \(code)). Some sites block apps like this one."
+            case 404, 410:
+                return "That page doesn't exist on \(host) (HTTP \(code))."
+            case 429:
+                return "\(host) asked the app to slow down (HTTP 429). Try again in a few minutes."
+            case 500...599:
+                return "\(host) had a server error (HTTP \(code)). Try again later."
+            default:
+                return "\(host) returned HTTP \(code) instead of the page."
+            }
+
+        case .unreadablePage(let host):
+            return "The page from \(host) couldn't be read as text."
+
+        case .network(let error, let host):
+            switch error.code {
+            case .secureConnectionFailed, .serverCertificateUntrusted, .serverCertificateHasBadDate,
+                 .serverCertificateNotYetValid, .serverCertificateHasUnknownRoot:
+                return "Couldn't make a secure connection to \(host). Its security certificate may be misconfigured."
+            case .timedOut:
+                return "\(host) didn't respond in time."
+            case .notConnectedToInternet:
+                return "No internet connection."
+            case .cannotFindHost, .dnsLookupFailed:
+                return "Couldn't find \(host)."
+            case .cannotConnectToHost:
+                return "Couldn't connect to \(host)."
+            default:
+                return "Network error for \(host): \(error.localizedDescription)"
+            }
         }
     }
 }
@@ -121,9 +156,22 @@ struct RecipeFetcher {
             throw RecipeFetchError.invalidURL
         }
 
-        let (data, _) = try await URLSession.shared.data(from: url)
+        let host = url.host ?? urlString
+
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await URLSession.shared.data(from: url)
+        } catch let error as URLError {
+            throw RecipeFetchError.network(error, host: host)
+        }
+
+        if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+            throw RecipeFetchError.httpStatus(http.statusCode, host: host)
+        }
+
         guard let html = String(data: data, encoding: .utf8) else {
-            throw RecipeFetchError.noRecipeFound
+            throw RecipeFetchError.unreadablePage(host: host)
         }
 
         let doc = try SwiftSoup.parse(html)
@@ -138,7 +186,12 @@ struct RecipeFetcher {
             return result
         }
 
-        throw RecipeFetchError.noRecipeFound
+        // Strategy 3: read the page as lines, for pages with no recipe markup
+        if let result = extractFromPlainText(html) {
+            return result
+        }
+
+        throw RecipeFetchError.noRecipeFound(host: host)
     }
 
     // MARK: - JSON-LD Extraction
@@ -280,6 +333,86 @@ struct RecipeFetcher {
             }
         }
         return result.map(cleanText)
+    }
+
+    // MARK: - Plain-Text Fallback
+
+    private static let stepsHeadingPattern = #"^(instructions|directions|method|preparation|steps)( \(.*\))?:?$"#
+
+    /// Last resort for pages with no recipe markup. Reads the page as lines and looks for an
+    /// "Ingredients" heading with its list under it, and an "Instructions" or "Directions"
+    /// heading with the steps under it.
+    private static func extractFromPlainText(_ html: String) -> RecipeFetchResult? {
+        let lines = plainTextLines(from: html)
+
+        guard let ingredientsStart = lines.firstIndex(where: { isHeading($0, pattern: #"^ingredients?:?$"#) }) else {
+            return nil
+        }
+
+        var ingredients: [String] = []
+        var index = ingredientsStart + 1
+        while index < lines.count, ingredients.count < 60 {
+            let line = lines[index]
+            if isHeading(line, pattern: stepsHeadingPattern) || isStopLine(line) { break }
+            if line.count < 200 { ingredients.append(line) }
+            index += 1
+        }
+        guard ingredients.count >= 2 else { return nil }
+
+        var steps: [String] = []
+        if let stepsStart = lines.firstIndex(where: { isHeading($0, pattern: stepsHeadingPattern) }) {
+            var stepIndex = stepsStart + 1
+            while stepIndex < lines.count, steps.count < 40 {
+                let line = lines[stepIndex]
+                if isStopLine(line) { break }
+                // Real steps are sentences. Short lines without punctuation are usually page footers.
+                if line.count > 20, let last = line.last, ".!?".contains(last) {
+                    steps.append(line)
+                }
+                stepIndex += 1
+            }
+        }
+
+        return RecipeFetchResult(
+            title: plainTextTitle(html) ?? "Untitled Recipe",
+            ingredients: ingredients,
+            steps: steps.isEmpty ? nil : steps,
+            totalMinutes: nil
+        )
+    }
+
+    /// The page's visible text, one entry per line. Block tags become line breaks.
+    private static func plainTextLines(from html: String) -> [String] {
+        var s = html.replacingOccurrences(of: #"(?si)<(script|style)[^>]*>.*?</\1>"#, with: "", options: .regularExpression)
+        s = s.replacingOccurrences(of: #"(?i)<br\s*/?>|</?(p|li|ul|ol|div|h[1-6]|tr|section|article|header|footer)\b[^>]*>"#, with: "\n", options: .regularExpression)
+        s = s.replacingOccurrences(of: #"<[^>]+>"#, with: "", options: .regularExpression)
+        return s
+            .components(separatedBy: .newlines)
+            .map { cleanText($0) }
+            .filter { !$0.isEmpty }
+    }
+
+    private static func plainTextTitle(_ html: String) -> String? {
+        // The <title> tag is usually the page's own name. Skip very long text, such as a browser warning.
+        for pattern in [#"(?si)<title[^>]*>.*?</title>"#, #"(?si)<h1[^>]*>.*?</h1>"#] {
+            guard let range = html.range(of: pattern, options: .regularExpression) else { continue }
+            let inner = String(html[range]).replacingOccurrences(of: #"<[^>]+>"#, with: "", options: .regularExpression)
+            let cleaned = cleanText(inner)
+            if !cleaned.isEmpty, cleaned.count <= 120 { return cleaned }
+        }
+        return nil
+    }
+
+    private static func isHeading(_ line: String, pattern: String) -> Bool {
+        line.range(of: pattern, options: [.regularExpression, .caseInsensitive]) != nil
+    }
+
+    /// Lines that start a section after the recipe, such as nutrition or comments.
+    private static func isStopLine(_ line: String) -> Bool {
+        line.range(
+            of: #"^(nutrition|notes?|share|comments?|related|advertisement|recommended|you (may|might) (also )?like|more from|latest|watch|don'?t miss|sign up|subscribe|click here)\b"#,
+            options: [.regularExpression, .caseInsensitive]
+        ) != nil
     }
 
     // MARK: - HTML Fallback
