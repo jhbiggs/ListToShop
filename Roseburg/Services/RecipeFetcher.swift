@@ -279,8 +279,37 @@ struct RecipeFetcher {
         for (entity, replacement) in entities {
             s = s.replacingOccurrences(of: entity, with: replacement)
         }
+        s = tidyDecimalAmounts(s)
         s = s.replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
         return s.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// Some pages store amounts as long decimals ("0.33333334326744 cup"). Show a common
+    /// fraction instead ("1/3 cup"), or two decimal places when no fraction fits.
+    static func tidyDecimalAmounts(_ text: String) -> String {
+        guard let regex = try? NSRegularExpression(pattern: #"(\d*)\.(\d{3,})"#) else { return text }
+        let commonFractions: [(value: Double, text: String)] = [
+            (1.0 / 8, "1/8"), (1.0 / 4, "1/4"), (1.0 / 3, "1/3"), (1.0 / 2, "1/2"), (2.0 / 3, "2/3"), (3.0 / 4, "3/4"),
+        ]
+
+        var result = text
+        let matches = regex.matches(in: result, range: NSRange(result.startIndex..., in: result))
+        // Replace from the end, so earlier ranges stay valid.
+        for match in matches.reversed() {
+            guard let range = Range(match.range, in: result),
+                  let value = Double(String(result[range])) else { continue }
+
+            let whole = Int(value)
+            let fraction = value - Double(whole)
+            let replacement: String
+            if let common = commonFractions.first(where: { abs($0.value - fraction) < 0.01 }) {
+                replacement = whole > 0 ? "\(whole) \(common.text)" : common.text
+            } else {
+                replacement = String(format: "%.2f", value)
+            }
+            result.replaceSubrange(range, with: replacement)
+        }
+        return result
     }
 
     // MARK: - Time Parsing
