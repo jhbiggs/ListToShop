@@ -29,6 +29,44 @@ struct AllStepIngredients {
 }
 #endif
 
+/// Thrown when a call runs past its time limit.
+private struct TimedOut: Error {}
+
+/// Lets only the first of two racing callers resume the continuation.
+private final class TimeoutGate: @unchecked Sendable {
+    private let lock = NSLock()
+    private var resumed = false
+
+    /// Returns true only for the first caller.
+    func claim() -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        if resumed { return false }
+        resumed = true
+        return true
+    }
+}
+
+/// Runs `operation`, but gives up after `seconds`. The model call can hang, and the spinner
+/// should not hang with it. The abandoned work is left to finish on its own.
+private func withTimeout<T>(seconds: Double, _ operation: @escaping @Sendable () async throws -> T) async throws -> T {
+    let gate = TimeoutGate()
+    return try await withCheckedThrowingContinuation { continuation in
+        Task {
+            do {
+                let value = try await operation()
+                if gate.claim() { continuation.resume(returning: value) }
+            } catch {
+                if gate.claim() { continuation.resume(throwing: error) }
+            }
+        }
+        Task {
+            try? await Task.sleep(for: .seconds(seconds))
+            if gate.claim() { continuation.resume(throwing: TimedOut()) }
+        }
+    }
+}
+
 // MARK: - View
 
 struct RecipeDetailView: View {
@@ -179,10 +217,9 @@ struct RecipeDetailView: View {
 
         do {
             let session = LanguageModelSession()
-            let response = try await session.respond(
-                to: prompt,
-                generating: AllStepIngredients.self
-            )
+            let response = try await withTimeout(seconds: 20) {
+                try await session.respond(to: prompt, generating: AllStepIngredients.self)
+            }
 
             var map: [Int: [GroceryItem]] = [:]
             for stepResult in response.content.steps {
