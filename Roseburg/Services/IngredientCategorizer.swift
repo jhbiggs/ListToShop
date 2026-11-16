@@ -298,6 +298,15 @@ struct IngredientCategorizer {
     private static func splitQuantityAndName(_ raw: String) -> (quantity: String, name: String) {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
 
+        // "Juice of 1 lemon", "Zest of 1 orange", "A pinch of red pepper flakes": the food comes after
+        // "of" and an optional amount, so parse what follows and drop the phrase.
+        if let phrase = trimmed.range(
+            of: #"^(?:(?:a|an)\s+)?(?:juice|zest|pinch|dash|handful|splash|sprig|bunch|drizzle)\s+of\s+"#,
+            options: [.regularExpression, .caseInsensitive]
+        ) {
+            return splitQuantityAndName(String(trimmed[phrase.upperBound...]))
+        }
+
         // Full unit names match in any case ("2 Tablespoons"); single letters stay case-sensitive
         // because T = tablespoon and t = teaspoon. The lookahead stops a unit from matching
         // the start of a longer word, which turned "2 Tablespoons" into "2 T" + "ablespoons".
@@ -382,7 +391,7 @@ struct IngredientCategorizer {
             "freshly", "fresh", "finely", "thinly", "thickly", "roughly", "coarsely",
             "lightly", "firmly", "well", "very",
             "chopped", "diced", "minced", "sliced", "grated", "shredded", "crushed",
-            "ground", "crumbled", "julienned", "cubed", "halved", "quartered",
+            "crumbled", "julienned", "cubed", "halved", "quartered",
             "peeled", "seeded", "deveined", "deboned", "boneless", "skinless",
             "trimmed", "cored", "pitted", "stemmed", "shelled", "husked",
             "melted", "softened", "chilled", "cooled", "warmed", "toasted",
@@ -407,6 +416,12 @@ struct IngredientCategorizer {
         }
 
         // Leftovers: nested parentheses, footnote stars, and a dangling "and"/"or" after modifiers were removed.
+        // "ground" is removed from spices ("ground cumin" → "cumin") but kept for meats ("ground beef").
+        name = name.replacingOccurrences(
+            of: #"\bground\b(?!\s+(?:beef|pork|turkey|chicken|lamb|bison|veal|sausage|mince))"#,
+            with: "",
+            options: .regularExpression
+        )
         name = name.replacingOccurrences(of: #"[()*]"#, with: "", options: .regularExpression)
         name = name.replacingOccurrences(of: #"[,\s]+(and|or)\s*$"#, with: "", options: .regularExpression)
 
